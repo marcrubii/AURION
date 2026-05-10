@@ -822,13 +822,129 @@
         margin: 12px;
       }
     }
+  
+
+    /* ===== AURION ORIGINAL LOGO - final implementation ===== */
+    .topbar {
+      align-items: center;
+    }
+
+    .brand-strip {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: nowrap;
+      min-width: 0;
+    }
+
+    .logo-card.upc-logo-card {
+      width: 156px;
+      min-width: 156px;
+      min-height: 66px;
+      padding: 12px 16px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.13);
+    }
+
+    .logo-card.upc-logo-card img {
+      max-height: 48px;
+      width: 100%;
+      object-fit: contain;
+    }
+
+    .aurion-logo-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 66px;
+      padding: 0;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      border-radius: 0;
+      transition: transform 0.22s ease, filter 0.22s ease;
+    }
+
+    .aurion-logo-link img {
+      display: block;
+      width: clamp(210px, 19vw, 300px);
+      max-height: 76px;
+      height: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.32));
+    }
+
+    .aurion-logo-link:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.08);
+    }
+
+    @media (max-width: 980px) {
+      .topbar {
+        align-items: flex-start;
+      }
+
+      .brand-strip {
+        flex-wrap: wrap;
+        gap: 14px;
+      }
+
+      .aurion-logo-link img {
+        width: min(250px, 68vw);
+      }
+    }
+
+    @media (max-width: 620px) {
+      .logo-card.upc-logo-card {
+        width: 142px;
+        min-width: 142px;
+      }
+
+      .aurion-logo-link img {
+        width: min(230px, 78vw);
+      }
+    }
+
+
+    /* Logo protagonista solo para la portada */
+    .aurion-hero-brand {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 0 30px;
+      padding: clamp(16px, 2.4vw, 24px) clamp(20px, 3.2vw, 34px);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: 30px;
+      background:
+        radial-gradient(circle at top left, rgba(141, 232, 255, 0.18), transparent 20rem),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.055));
+      box-shadow: 0 28px 64px rgba(0, 0, 0, 0.22);
+      backdrop-filter: blur(14px);
+    }
+
+    .aurion-hero-brand img {
+      display: block;
+      width: min(660px, 86vw);
+      max-height: 180px;
+      height: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 18px 40px rgba(0, 0, 0, 0.35));
+    }
+
+    @media (max-width: 860px) {
+      .aurion-hero-brand img {
+        width: min(520px, 88vw);
+      }
+    }
+
   </style>
 </head>
 <body>
   <header class="site-header">
     <div class="topbar">
       <div class="brand-strip" aria-label="Identidad del proyecto">
-        <a class="logo-card" href="https://www.upc.edu" target="_blank" rel="noopener noreferrer" aria-label="Abrir web de la UPC">
+        <a class="logo-card upc-logo-card" href="https://www.upc.edu" target="_blank" rel="noopener noreferrer" aria-label="Abrir web de la UPC">
           <img src="upc-logo.png" alt="Logo de la Universitat Politècnica de Catalunya">
         </a>
         <a class="aurion-logo-link" href="index.html" aria-label="Ir al inicio de AURION">
