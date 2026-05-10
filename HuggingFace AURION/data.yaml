@@ -1,0 +1,5 @@
+train: /content/images/train
+val: /content/images/val
+
+nc: 6
+names: ['palet_bueno', 'palet_roto', 'paquete_emb_correct_dim_correct', 'paquete_emb_correct_dim_incorrect', 'paquete_emb_incorrect_dim_correct', 'paquete_emb_incorrect_dim_incorrect']
