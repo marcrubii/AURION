@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 180" role="img" aria-labelledby="title desc">
+  <title id="title">AURION</title>
+  <desc id="desc">Logo de AURION con símbolo de visión artificial y wordmark.</desc>
+  <defs>
+    <linearGradient id="aurionCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6ee7ff"/>
+      <stop offset="52%" stop-color="#19a7ce"/>
+      <stop offset="100%" stop-color="#0087d7"/>
+    </linearGradient>
+    <linearGradient id="aurionNavy" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d3d66"/>
+      <stop offset="100%" stop-color="#061f3b"/>
+    </linearGradient>
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <g transform="translate(24 22)">
+    <path d="M28 68 C58 20, 128 8, 176 68 C128 128, 58 116, 28 68Z" fill="none" stroke="#ffffff" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" opacity="0.96"/>
+    <path d="M28 68 C58 20, 128 8, 176 68" fill="none" stroke="url(#aurionNavy)" stroke-width="5" stroke-linecap="round" opacity="0.9"/>
+    <path d="M28 68 C58 116, 128 128, 176 68" fill="none" stroke="url(#aurionNavy)" stroke-width="5" stroke-linecap="round" opacity="0.9"/>
+    <circle cx="102" cy="68" r="42" fill="url(#aurionCyan)" filter="url(#softGlow)"/>
+    <circle cx="102" cy="68" r="27" fill="#062b4f"/>
+    <circle cx="90" cy="52" r="8" fill="#ffffff" opacity="0.9"/>
+    <circle cx="102" cy="68" r="52" fill="none" stroke="#ffffff" stroke-width="4" opacity="0.9"/>
+    <g stroke="url(#aurionCyan)" stroke-width="5" stroke-linecap="round" opacity="0.95">
+      <path d="M0 68 H24"/><path d="M7 84 H38"/><path d="M7 52 H38"/>
+      <path d="M180 68 H204"/><path d="M166 84 H197"/><path d="M166 52 H197"/>
+    </g>
+    <g fill="url(#aurionCyan)" opacity="0.95">
+      <rect x="8" y="4" width="44" height="8" rx="4"/><rect x="8" y="4" width="8" height="44" rx="4"/>
+      <rect x="152" y="4" width="44" height="8" rx="4"/><rect x="188" y="4" width="8" height="44" rx="4"/>
+      <rect x="8" y="124" width="44" height="8" rx="4"/><rect x="8" y="88" width="8" height="44" rx="4"/>
+      <rect x="152" y="124" width="44" height="8" rx="4"/><rect x="188" y="88" width="8" height="44" rx="4"/>
+    </g>
+  </g>
+
+  <g transform="translate(260 0)">
+    <text x="0" y="116" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="82" font-weight="900" letter-spacing="4" fill="#ffffff">AURION</text>
+    <path d="M42 82 L61 112 H23 Z" fill="url(#aurionCyan)" opacity="0.95"/>
+    <path d="M424 48 L467 48 L467 88 Z" fill="url(#aurionCyan)" opacity="0.95"/>
+    <rect x="0" y="132" width="320" height="5" rx="2.5" fill="url(#aurionCyan)" opacity="0.8"/>
+  </g>
+</svg>
