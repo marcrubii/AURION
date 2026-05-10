@@ -938,6 +938,148 @@
       }
     }
 
+  
+
+    /* === AURION exact logo implementation === */
+    .brand-strip {
+      display: flex !important;
+      align-items: center !important;
+      gap: 18px !important;
+      flex-wrap: wrap !important;
+    }
+
+    .logo-card.upc-logo-card {
+      width: 156px !important;
+      min-height: 66px !important;
+      padding: 12px 16px !important;
+      border-radius: 16px !important;
+      background: rgba(255, 255, 255, 0.96) !important;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.13) !important;
+    }
+
+    .logo-card.upc-logo-card img {
+      max-height: 48px !important;
+      width: auto !important;
+      object-fit: contain !important;
+    }
+
+    .aurion-logo-link {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      min-height: 66px !important;
+      padding: 0 !important;
+      background: transparent !important;
+      border: 0 !important;
+      box-shadow: none !important;
+      border-radius: 0 !important;
+      overflow: visible !important;
+    }
+
+    .aurion-logo-link img {
+      display: block !important;
+      width: clamp(190px, 18vw, 280px) !important;
+      max-height: 66px !important;
+      height: auto !important;
+      object-fit: contain !important;
+      filter: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+
+    .aurion-logo-link:hover {
+      transform: translateY(-1px) !important;
+      filter: none !important;
+    }
+
+    @media (max-width: 860px) {
+      .aurion-logo-link img {
+        width: min(230px, 72vw) !important;
+        max-height: none !important;
+      }
+    }
+
+
+    /* === Clearer index hero presentation === */
+    .site-header {
+      padding: 28px 6vw 92px !important;
+    }
+
+    .hero {
+      display: grid !important;
+      grid-template-columns: minmax(0, 1fr) !important;
+      align-items: start !important;
+      gap: 0 !important;
+      padding-top: clamp(48px, 7vw, 72px) !important;
+    }
+
+    .hero > .reveal {
+      max-width: 1080px !important;
+    }
+
+    .aurion-hero-brand {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: min(880px, 100%) !important;
+      margin: 0 0 28px !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+      border-radius: 26px !important;
+      background: #ffffff !important;
+      border: 1px solid rgba(255, 255, 255, 0.42) !important;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2) !important;
+      backdrop-filter: none !important;
+    }
+
+    .aurion-hero-brand img {
+      display: block !important;
+      width: 100% !important;
+      height: auto !important;
+      max-height: none !important;
+      object-fit: contain !important;
+      filter: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+
+    .hero .eyebrow {
+      margin-top: 0 !important;
+      margin-bottom: 22px !important;
+    }
+
+    .hero h1 {
+      max-width: 1060px !important;
+      font-size: clamp(2.55rem, 4.8vw, 5.15rem) !important;
+      line-height: 1.02 !important;
+      letter-spacing: -0.055em !important;
+    }
+
+    .hero-lead {
+      max-width: 940px !important;
+      margin-top: 24px !important;
+    }
+
+    .hero-actions {
+      margin-top: 30px !important;
+    }
+
+    @media (max-width: 860px) {
+      .site-header {
+        padding-bottom: 76px !important;
+      }
+      .hero {
+        padding-top: 46px !important;
+      }
+      .aurion-hero-brand {
+        width: 100% !important;
+        border-radius: 20px !important;
+      }
+      .hero h1 {
+        font-size: clamp(2.35rem, 10vw, 3.8rem) !important;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -948,7 +1090,7 @@
           <img src="upc-logo.png" alt="Logo de la Universitat Politècnica de Catalunya">
         </a>
         <a class="aurion-logo-link" href="index.html" aria-label="Ir al inicio de AURION">
-          <img src="aurion-logo.svg" alt="AURION">
+          <img src="aurion-logo.png" alt="AURION">
         </a>
       </div>
 
@@ -964,12 +1106,12 @@
     <section class="hero" aria-labelledby="hero-title">
       <div class="reveal">
         <div class="aurion-hero-brand" aria-label="AURION">
-          <img src="aurion-logo.svg" alt="AURION · Inspección inteligente para logística industrial">
+          <img src="aurion-logo.png" alt="AURION · Inspección inteligente para logística industrial">
         </div>
         <p class="eyebrow">AURION · Visión artificial · Logística industrial</p>
         <h1 id="hero-title">Inspección inteligente para <span>logística industrial</span></h1>
         <p class="hero-lead">
-          AURION automatiza el control visual de palets y mercancías con IA, detectando daños, anomalías y errores de embalaje para convertir la inspección manual en un proceso objetivo, rápido y escalable.
+          AURION automatiza el control visual de palets y mercancías mediante IA, detectando daños, anomalías y errores de embalaje para transformar la inspección manual en trazabilidad visual rápida, objetiva y escalable.
         </p>
         <div class="hero-actions" aria-label="Acciones principales">
           <a class="btn btn-primary" href="resultados.html">Ver resultados visuales</a>
