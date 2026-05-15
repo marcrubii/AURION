@@ -1234,6 +1234,8 @@ files.download('/content/labels_filtradas.zip')</code></pre>
     &copy; 2025 Marc Rubí · AURION
   </footer>
 
+  <script src="lang.js"></script>
+
   <script>
     const elements = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver((entries) => {
@@ -1255,11 +1257,11 @@ files.download('/content/labels_filtradas.zip')</code></pre>
         try {
           await navigator.clipboard.writeText(codeBlock.textContent);
           const previousText = copyButton.textContent;
-          copyButton.textContent = 'Copiado';
+          copyButton.textContent = window.AURION_I18N ? window.AURION_I18N.t('Copiado') : 'Copiado';
           setTimeout(() => copyButton.textContent = previousText, 1600);
         } catch (error) {
-          copyButton.textContent = 'No se pudo copiar';
-          setTimeout(() => copyButton.textContent = 'Copiar código', 1800);
+          copyButton.textContent = window.AURION_I18N ? window.AURION_I18N.t('No se pudo copiar') : 'No se pudo copiar';
+          setTimeout(() => copyButton.textContent = window.AURION_I18N ? window.AURION_I18N.t('Copiar código') : 'Copiar código', 1800);
         }
       });
     }
