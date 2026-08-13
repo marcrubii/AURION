@@ -1,58 +1,60 @@
 # AURION
 
-Detección automática de defectos en palets y embalaje para puestos de control de calidad en recepción de mercancía.
+Automated defect detection for pallets and packaging at goods-receiving quality control stations.
 
-**Demo:** https://huggingface.co/spaces/MarcRubi04/AURION — acepta imagen o vídeo, con umbral de confianza ajustable
-**Web:** https://marcrubii.github.io/AURION/
+**Demo:** https://huggingface.co/spaces/MarcRubi04/AURION — accepts images or video, with an adjustable confidence threshold
+**Project site:** https://marcrubii.github.io/AURION/
 
-> El Space está alojado en el tier gratuito y se suspende tras un periodo de inactividad. La primera carga puede tardar unos 30 segundos en arrancar.
+> The Space runs on the free tier and sleeps after a period of inactivity. The first load may take around 30 seconds to wake up.
 
 ---
 
-> ### Sobre los datos
+> ### About the data
 >
-> El dataset son **870 imágenes sintéticas** generadas con modelos de imagen, anotadas manualmente. El sistema **no ha sido validado sobre fotografías de una cámara industrial real**. Los resultados de este documento describen el rendimiento dentro de ese dominio sintético y no deben extrapolarse a un despliegue en producción sin una validación previa con datos reales. Ver [Limitaciones](#limitaciones).
+> The dataset consists of **870 synthetic images** produced with generative image models and annotated by hand. The system has **not been validated on footage from a real industrial camera**. The results below describe performance within that synthetic domain and should not be extrapolated to a production deployment without prior validation on real data. See [Limitations](#limitations).
 
 ---
 
-## El problema
+## The problem
 
-En la recepción de mercancía de un almacén, cada palet debe inspeccionarse antes de aceptarse: comprobar que la paleta no está dañada, que el embalaje es correcto y que las dimensiones de la carga se ajustan a lo esperado. La revisión es manual, lenta y depende del criterio del operario.
+At a warehouse receiving dock, every incoming pallet has to be inspected before acceptance: check that the pallet itself is undamaged, that the packaging is correct, and that the load dimensions match what was expected. This is done manually, it is slow, and it depends on the individual operator's judgement.
 
-AURION propone automatizarla con un detector de objetos en un puesto de control con **cámara fija**: el palet pasa por un plano conocido, se captura una imagen y el sistema clasifica seis situaciones.
+AURION automates the check with an object detector at a **fixed-camera** control station: the pallet passes through a known plane, an image is captured, and the system classifies six situations.
 
-| Clase | Significado |
+| Class | Meaning |
 |---|---|
-| `palet_bueno` | Paleta en buen estado |
-| `palet_roto` | Paleta dañada |
-| `paquete_emb_correct_dim_correct` | Embalaje y dimensiones correctos |
-| `paquete_emb_correct_dim_incorrect` | Embalaje correcto, dimensiones incorrectas |
-| `paquete_emb_incorrect_dim_correct` | Embalaje incorrecto, dimensiones correctas |
-| `paquete_emb_incorrect_dim_incorrect` | Ambos incorrectos |
+| `palet_bueno` | Pallet in good condition |
+| `palet_roto` | Damaged pallet |
+| `paquete_emb_correct_dim_correct` | Packaging and dimensions both correct |
+| `paquete_emb_correct_dim_incorrect` | Packaging correct, dimensions incorrect |
+| `paquete_emb_incorrect_dim_correct` | Packaging incorrect, dimensions correct |
+| `paquete_emb_incorrect_dim_incorrect` | Both incorrect |
+
+Class names are kept in Spanish because they are baked into the trained weights, the `data.yaml` and every results file. Renaming them would break reproducibility.
 
 ---
 
-## Resultados
+## Results
 
-Modelo final: **YOLO11n** (2.58 M parámetros, 6.4 GFLOPs). Evaluado sobre un conjunto de test de 127 imágenes y 1.379 instancias, nunca vistas durante el entrenamiento en ninguna de sus variantes.
+Final model: **YOLO11n** (2.58 M parameters, 6.4 GFLOPs). Evaluated on a held-out test set of 127 images and 1,379 instances, none of which — in any augmented variant — was seen during training.
 
-### Por escenario
+### By deployment scenario
 
-El test contiene dos tipos de imagen: escenas de control (uno a seis objetos, grandes, plano completo) y escenas de almacén general (hasta 72 objetos a distintas profundidades). Solo las primeras corresponden al caso de uso previsto, así que se reportan por separado.
+The test set contains two visually distinct populations: control-station scenes (one to six large objects, full frame) and general warehouse scenes (up to 72 objects at varying depths). Only the former matches the intended use case, so both are reported separately.
 
-| Escenario | Imágenes | mAP50 | mAP50-95 | Precisión | Recall | Recall `palet_roto` |
+| Scenario | Images | mAP50 | mAP50-95 | Precision | Recall | `palet_roto` recall |
 |---|---|---|---|---|---|---|
-| **Control** (dominio de diseño) | 61 | **0.881** | **0.738** | 0.858 | 0.874 | **0.901** |
-| Almacén (fuera de especificación) | 66 | 0.858 | 0.672 | 0.852 | 0.815 | 0.756 |
-| Global | 127 | 0.860 | 0.681 | 0.845 | 0.823 | 0.790 |
+| **Control station** (design domain) | 61 | **0.881** | **0.738** | 0.858 | 0.874 | **0.901** |
+| Warehouse (out of spec) | 66 | 0.858 | 0.672 | 0.852 | 0.815 | 0.756 |
+| Combined | 127 | 0.860 | 0.681 | 0.845 | 0.823 | 0.790 |
 
-En control de calidad la métrica crítica es el **recall sobre `palet_roto`**: mide qué proporción de palets dañados se detecta. Dentro del dominio de diseño es de **0.901**; fuera cae a 0.756.
+In quality control the metric that matters is **recall on `palet_roto`** — the fraction of damaged pallets actually caught. Within the design domain it is **0.901**; outside it drops to 0.756.
 
-El criterio de separación entre escenarios usa únicamente la verdad terreno (número de objetos anotados y área del mayor), nunca las predicciones del modelo, y es reproducible con `AURION_filtrado.ipynb`.
+The scenario split is derived exclusively from ground-truth annotations (object count and largest-object area), never from model predictions, and is reproducible via `AURION_filtrado.ipynb`.
 
-### Por clase (mAP50-95)
+### Per class (mAP50-95)
 
-| Clase | Control | Almacén | Global |
+| Class | Control | Warehouse | Combined |
 |---|---|---|---|
 | `palet_bueno` | 0.693 | 0.639 | 0.643 |
 | `palet_roto` | 0.765 | 0.561 | 0.613 |
@@ -61,164 +63,164 @@ El criterio de separación entre escenarios usa únicamente la verdad terreno (n
 | `paquete_emb_incorrect_dim_correct` | 0.790 | 0.558 | 0.616 |
 | `paquete_emb_incorrect_dim_incorrect` | 0.687 | 0.805 | 0.777 |
 
-Las clases con `dim_incorrect` rinden **mejor** en escenas densas. Una hipótesis plausible es que las dimensiones anómalas se juzgan por comparación: rodeadas de otros paquetes hay referencia visual, aisladas en un plano de control no la hay. No está verificado.
+The two `dim_incorrect` classes perform **better** in cluttered scenes. A plausible explanation is that anomalous dimensions are judged comparatively: surrounded by other packages there is a visual reference, isolated in a control-station frame there is none. This is a hypothesis, not a verified finding.
 
-### Velocidad
+### Inference speed
 
-| Etapa | ms/imagen |
+| Stage | ms/image |
 |---|---|
-| Preprocesado | 1.7 |
-| Inferencia | 6.9 |
-| Postprocesado (NMS) | 15.5 |
+| Preprocessing | 1.7 |
+| Inference | 6.9 |
+| Postprocessing (NMS) | 15.5 |
 
-Medido en NVIDIA A100. La inferencia equivale a ~145 fps. El postprocesado supera al propio modelo y sería el primer objetivo de optimización en un despliegue real.
+Measured on an NVIDIA A100. Inference alone is roughly 145 FPS. Postprocessing costs more than the model itself and would be the first optimisation target in a real deployment.
 
 ---
 
-## Corrección metodológica: fuga de datos
+## Methodological correction: data leakage
 
-La primera versión de este proyecto reportaba **mAP50-95 = 0.988**. Ese resultado era inválido.
+The first version of this project reported **mAP50-95 = 0.988**. That result was invalid.
 
-### Qué ocurrió
+### What went wrong
 
-El dataset se aumentó **antes** de dividirlo: las 870 imágenes originales se pasaron por Roboflow con augmentación ×4, generando 2.610, y el reparto train/val se hizo sobre ese conjunto ya multiplicado. Variantes de la misma imagen original acabaron a ambos lados de la partición. El modelo no generalizaba: reconocía imágenes que ya había visto con otro brillo o rotación.
+The dataset was augmented **before** it was split. The 870 original images were passed through Roboflow with 4× augmentation, producing 2,610 files, and the train/val split was performed on that already-multiplied set. Variants of the same source image ended up on both sides of the partition. The model was not generalising — it was recognising images it had already seen at a different brightness or rotation.
 
-### Cómo se detectó
+### How it was caught
 
-Tres señales en las curvas de entrenamiento:
+Three signals in the training curves:
 
-1. **mAP50 = 0.876 en la época 1.** Con un modelo preentrenado en COCO, que no conoce ninguna de las seis clases, tras una sola pasada. La tarea ya estaba resuelta antes de aprender nada.
-2. **mAP50 y mAP50-95 casi idénticas** (0.992 y 0.988). Lo normal es una brecha amplia.
-3. **La pérdida de validación por debajo de la de entrenamiento** durante 200 épocas (−22 % en la época 200). Ocurre cuando validación es más fácil que entrenamiento: en este caso, las mismas imágenes sin la augmentación agresiva que Ultralytics aplica solo a train.
+1. **mAP50 = 0.876 at epoch 1.** From a COCO-pretrained model that has never seen any of the six classes, after a single pass. The task was effectively solved before any learning took place.
+2. **mAP50 and mAP50-95 nearly identical** (0.992 and 0.988). A wide gap between the two is normal.
+3. **Validation loss below training loss** for 200 epochs (−22 % at epoch 200). This happens when the validation set is easier than the training set — here, the same images without the aggressive augmentation Ultralytics applies to training data only.
 
-### La corrección
+### The fix
 
-Split agrupado por imagen original: todas las variantes de una misma foto caen enteras en una única partición. Además se añadió un conjunto de test independiente, que antes no existía, y en validación y test se conserva **una sola variante por original**.
+A group-wise split: every augmented variant of a source image is assigned to exactly one partition. A held-out test set was added, which had not existed before, and validation and test retain **a single variant per source image**.
 
-| Evaluación | mAP50 | mAP50-95 |
+| Evaluation | mAP50 | mAP50-95 |
 |---|---|---|
-| Split aleatorio, val *(con fuga)* | 0.992 | 0.988 |
-| Split agrupado, val | 0.906 | 0.741 |
-| **Split agrupado, test** | **0.859** | **0.681** |
+| Random split, val *(leaked)* | 0.992 | 0.988 |
+| Group-wise split, val | 0.906 | 0.741 |
+| **Group-wise split, test** | **0.859** | **0.681** |
 
-La fuga inflaba el resultado en **31 puntos de mAP50-95**.
+Leakage was inflating the headline figure by **31 mAP50-95 points**.
 
-Tras la corrección, la época 1 pasa de 0.705 a **0.168** de mAP50-95, y la pérdida de validación queda por encima de la de entrenamiento (+0.245), que es el comportamiento esperable.
+After the fix, epoch-1 mAP50-95 drops from 0.705 to **0.168**, and validation loss sits above training loss (+0.245) — the expected behaviour.
 
-El script de partición es `split_aurion.py` e incluye una verificación explícita de solapamiento entre particiones.
+The partitioning script is `split_aurion.py` and includes an explicit cross-partition overlap check.
 
 ---
 
-## Elección de modelo
+## Model selection
 
-Se entrenaron tres tamaños en condiciones idénticas (150 épocas, `patience=30`, 640 px, semilla fija).
+Three sizes were trained under identical conditions (150 epochs, `patience=30`, 640 px, fixed seed).
 
-| Modelo | Parámetros | Época mejor | mAP50 | mAP50-95 | Tiempo |
+| Model | Parameters | Best epoch | mAP50 | mAP50-95 | Wall time |
 |---|---|---|---|---|---|
 | **YOLO11n** | **2.6 M** | 63 | 0.906 | **0.741** | 12.1 min |
 | YOLO11s | 9.4 M | 58 | 0.896 | 0.733 | 13.3 min |
 | YOLO11m | 20.1 M | 56 | 0.909 | 0.744 | 20.9 min |
 
-Los tres quedan dentro de un punto de mAP50-95, diferencia atribuible al ruido de un conjunto de validación de 130 imágenes. Con ocho veces menos parámetros, el modelo `n` rinde igual que el `m`.
+All three land within one mAP50-95 point of each other — a difference attributable to noise on a 130-image validation set. At eight times fewer parameters, the `n` variant matches the `m`.
 
-**Se elige `n`**: en un puesto de control industrial interesa un modelo que corra en hardware modesto (Jetson, mini-PC, CPU), y la capacidad adicional no aporta precisión medible en esta tarea.
+**`n` is the deployment choice.** An industrial control station benefits from a model that runs on modest hardware (Jetson, industrial mini-PC, CPU), and the extra capacity buys no measurable accuracy on this task.
 
 ---
 
-## Robustez
+## Robustness
 
-El supuesto de cámara fija fija la geometría, pero no las condiciones fotométricas. Se degradó el conjunto de test en niveles controlados y se midió la caída de mAP50 (base: 0.860). Todas las degradaciones son fotométricas o desenfoque, de modo que las anotaciones siguen siendo válidas sin modificarlas.
+A fixed camera constrains geometry but not photometric conditions. The test set was degraded at controlled levels and the drop in mAP50 measured (baseline: 0.860). All degradations are photometric or blur, so bounding-box annotations remain valid unmodified.
 
-| Degradación | Nivel más severo probado | mAP50 | Variación |
+| Degradation | Most severe level tested | mAP50 | Change |
 |---|---|---|---|
-| Brillo | ×0.4 | 0.853 | −0.7 % |
-| Brillo | ×1.5 | 0.854 | −0.6 % |
-| Contraste | ×0.4 | 0.852 | −1.0 % |
-| Compresión JPEG | calidad 15 | 0.849 | −1.3 % |
-| Desenfoque gaussiano | kernel 15 | 0.811 | −5.7 % |
-| Ruido gaussiano | σ = 20 | 0.795 | −7.5 % |
-| Ruido gaussiano | σ = 35 | 0.667 | −22.4 % |
-| **Desenfoque de movimiento** | **kernel 11** | **0.596** | **−30.7 %** |
-| **Desenfoque de movimiento** | **kernel 21** | **0.217** | **−74.7 %** |
+| Brightness | ×0.4 | 0.853 | −0.7 % |
+| Brightness | ×1.5 | 0.854 | −0.6 % |
+| Contrast | ×0.4 | 0.852 | −1.0 % |
+| JPEG compression | quality 15 | 0.849 | −1.3 % |
+| Gaussian blur | kernel 15 | 0.811 | −5.7 % |
+| Gaussian noise | σ = 20 | 0.795 | −7.5 % |
+| Gaussian noise | σ = 35 | 0.667 | −22.4 % |
+| **Motion blur** | **kernel 11** | **0.596** | **−30.7 %** |
+| **Motion blur** | **kernel 21** | **0.217** | **−74.7 %** |
 
-### Conclusión
+### Takeaway
 
-El modelo es **prácticamente inmune a iluminación, contraste y compresión**, probablemente gracias a la augmentación HSV que Ultralytics aplica durante el entrenamiento. Tolera ruido de sensor hasta σ ≈ 20.
+The model is **effectively immune to lighting, contrast and compression**, most likely thanks to the HSV augmentation Ultralytics applies during training. It tolerates sensor noise up to σ ≈ 20.
 
-Su vulnerabilidad es el **desenfoque de movimiento**. Nótese la asimetría: un desenfoque gaussiano de kernel 15 cuesta un 5.7 %, mientras que un desenfoque direccional de kernel 11 cuesta un 30.7 %. Una explicación plausible es que la paleta se identifica por sus tablas horizontales, y un barrido horizontal las emborrona en la dirección que las destruye.
+Its weakness is **motion blur**. Note the asymmetry: isotropic Gaussian blur at kernel 15 costs 5.7 %, while directional blur at kernel 11 costs 30.7 %. A plausible explanation is that pallets are identified by their horizontal slats, and a horizontal smear degrades exactly the structure the model relies on.
 
-**Requisito de instalación derivado:** obturador rápido o captura con el palet detenido. Con un desplazamiento superior a ~10 px durante la exposición, el rendimiento cae por debajo de lo aceptable.
+**Derived installation requirement:** fast shutter, or capture with the pallet stationary. Beyond roughly 10 px of displacement during exposure, performance falls below an acceptable threshold.
 
 ---
 
-## Análisis de errores
+## Error analysis
 
-Sobre el test, con umbral de confianza 0.25 e IoU 0.5: **449 errores en 87 de 127 imágenes**.
+On the test set, at confidence 0.25 and IoU 0.5: **449 errors across 87 of 127 images**.
 
-| Tipo | Casos |
+| Type | Count |
 |---|---|
-| Falso positivo (detección sin objeto real) | 231 |
-| Confusión (posición correcta, clase errónea) | 111 |
-| No detectado (objeto real no visto) | 107 |
+| False positive (detection with no matching object) | 231 |
+| Misclassification (correct location, wrong class) | 111 |
+| Missed detection (real object not found) | 107 |
 
-### El modo de fallo dominante
+### Dominant failure mode
 
-| Confusión | Casos |
+| Misclassification | Count |
 |---|---|
 | `palet_roto` → `palet_bueno` | **52** |
 | `palet_bueno` → `palet_roto` | 6 |
 
-Sumando los 15 `palet_roto` no detectados, hay **67 casos en los que un palet defectuoso supera el control**.
+Adding the 15 undetected `palet_roto` instances, there are **67 cases where a defective pallet passes inspection**.
 
-La asimetría 52 : 6 indica un **sesgo hacia clasificar como correcto**, que es la dirección desfavorable en control de calidad: un falso positivo cuesta una revisión manual; un falso negativo deja pasar producto defectuoso.
+The 52 : 6 asymmetry indicates a **bias towards predicting the non-defective class** — the unfavourable direction for quality control, where a false positive costs a manual re-check while a false negative ships a defective unit.
 
-Las confusiones entre clases de paquete se concentran en pares que comparten un atributo y difieren en el otro (13 y 11 casos en los dos pares principales), lo que apunta al diseño de clases discutido en Limitaciones.
+Misclassifications among the packaging classes cluster in pairs that share one attribute and differ in the other (13 and 11 cases in the two leading pairs), which points to the class-design issue discussed under Limitations.
 
-### El umbral de confianza no corrige los falsos positivos
+### Raising the confidence threshold does not remove false positives
 
-| Umbral | Precisión | Recall | Recall `palet_roto` |
+| Threshold | Precision | Recall | `palet_roto` recall |
 |---|---|---|---|
 | 0.10 | 0.845 | 0.823 | 0.790 |
 | 0.30 | 0.845 | 0.823 | 0.790 |
 | 0.60 | 0.860 | 0.793 | 0.770 |
 
-La precisión permanece plana hasta 0.6, punto en el que ya se pierde recall. La confianza media de los falsos positivos es **0.532**: no son detecciones dudosas filtrables, sino errores confiados.
+Precision is flat up to 0.6, by which point recall is already degrading. Mean confidence of false positives is **0.532** — these are confident errors, not borderline detections that thresholding can filter out.
 
-Dado el coste asimétrico de los dos tipos de error, se opta por **mantener el umbral bajo** y asumir los falsos positivos.
-
----
-
-## Limitaciones
-
-**Dataset sintético.** Las 870 imágenes son generadas, no fotografiadas. Reproducen la geometría del escenario previsto pero no la apariencia de una cámara industrial real: ruido de sensor, reflejos sobre film retráctil, polvo, ni la sutileza de los defectos reales. Un palet astillado real no se parece a uno generado.
-
-**Sin validación en dominio real.** No se ha medido el rendimiento sobre fotografías de un puesto de control físico. Es la limitación principal y la primera línea de trabajo futuro.
-
-**Distribución de clases artificial.** El dataset contiene 331 instancias de `palet_roto` en test, una proporción muy superior a la de un almacén real, donde los defectos son minoritarios. Las métricas no reflejan el desbalance que se encontraría en producción.
-
-**Diseño de clases.** Las cuatro clases de paquete codifican dos atributos binarios independientes (embalaje y dimensiones) como cuatro categorías separadas. Esto fragmenta los datos e impide que el modelo aprenda cada atributo como concepto unificado. La matriz de confusión lo confirma. Un diseño alternativo —detección de paquete más dos clasificadores de atributo, o clasificación multietiqueta— sería probablemente superior.
-
-**Sensibilidad al movimiento.** Ver la sección de robustez: exige control sobre la captura.
-
-**Sesgo hacia clase correcta.** El modo de fallo dominante va en la dirección desfavorable para control de calidad.
+Given the asymmetric cost of the two error types, the chosen operating point **keeps the threshold low** and accepts the false positives.
 
 ---
 
-## Reproducir
+## Limitations
+
+**Synthetic dataset.** The 870 images are generated, not photographed. They reproduce the geometry of the intended scenario but not the appearance of a real industrial camera: sensor noise, glare on stretch wrap, dust, or the subtlety of real-world defects. A genuinely splintered pallet does not look like a generated one.
+
+**No in-domain validation.** Performance on footage from a physical control station has not been measured. This is the principal limitation and the first item of future work.
+
+**Artificial class distribution.** The test set contains 331 `palet_roto` instances — a far higher proportion than a real warehouse, where defects are rare. The reported metrics do not reflect the class imbalance a production system would face.
+
+**Class design.** The four packaging classes encode two independent binary attributes (packaging and dimensions) as four separate categories. This fragments the data and prevents the model from learning each attribute as a unified concept; the confusion matrix bears this out. A detector plus two attribute classifiers, or a multi-label formulation, would likely perform better.
+
+**Motion sensitivity.** See Robustness — the system requires control over capture conditions.
+
+**Bias towards the non-defective class.** The dominant failure mode runs in the unfavourable direction for quality control.
+
+---
+
+## Reproducing
 
 ```bash
 pip install ultralytics opencv-python pandas matplotlib
 ```
 
-**1. Partición sin fuga**
+**1. Leak-free partitioning**
 
 ```bash
-python split_aurion.py     # DRY_RUN=True primero: solo diagnóstico
+python ml/split_aurion.py     # run with DRY_RUN=True first — diagnostics only
 ```
 
-Verifica el solapamiento entre particiones antes de escribir nada. Los tres cruces deben dar 0.
+Verifies cross-partition overlap before writing anything. All three intersections must be 0.
 
-**2. Entrenamiento**
+**2. Training**
 
 ```python
 from ultralytics import YOLO
@@ -228,66 +230,68 @@ YOLO("yolo11n.pt").train(
 )
 ```
 
-**3. Evaluación sobre test** — una sola vez, sin ajustar nada después
+**3. Test evaluation** — run once, with no further tuning afterwards
 
 ```python
 m = YOLO("runs/detect/train/weights/best.pt")
 r = m.val(split="test")
 ```
 
-**4. Análisis** — `AURION_analisis.ipynb` (robustez y errores) y `AURION_filtrado.ipynb` (por escenario).
+**4. Analysis** — `AURION_analisis.ipynb` (robustness and errors) and `AURION_filtrado.ipynb` (per-scenario evaluation).
 
 ---
 
-## Estructura
+## Repository layout
 
 ```
-├── index.html                 Web del proyecto (GitHub Pages sirve desde la raíz)
+├── index.html                 Project site (GitHub Pages serves from root)
 ├── resultados.html
 ├── demo.html
 ├── modelo.html
 ├── contacto.html
 ├── style.css
-├── lang.js                    Soporte bilingüe
-├── imagenes/  multimedia/     Recursos de la web
+├── lang.js                    Bilingual support
+├── imagenes/  multimedia/     Site assets
 │
-├── app.py                     Demo de Gradio (Hugging Face Space)
+├── app.py                     Gradio demo (Hugging Face Space)
 ├── requirements.txt
 │
 ├── ml/
-│   ├── split_aurion.py        Partición agrupada por imagen original
-│   ├── AURION_analisis.ipynb  Robustez y análisis de errores
-│   ├── AURION_filtrado.ipynb  Evaluación por escenario de despliegue
+│   ├── split_aurion.py        Group-wise partitioning
+│   ├── AURION_analisis.ipynb  Robustness and error analysis
+│   ├── AURION_filtrado.ipynb  Per-scenario evaluation
 │   └── data.yaml
 ├── results/
-│   ├── yolo11n/               results.csv, curvas, matriz de confusión
+│   ├── yolo11n/               results.csv, curves, confusion matrix
 │   ├── yolo11s/  yolo11m/
 │   ├── robustez.csv
 │   ├── errores.csv
 │   └── por_escenario.csv
-└── weights/best.pt            Modelo final (YOLO11n)
+└── weights/best.pt            Final model (YOLO11n)
 ```
 
 ---
 
 ## Stack
 
-Ultralytics YOLO11 · PyTorch · OpenCV · pandas · Roboflow (anotación) · Google Colab (A100) · Gradio + Hugging Face Spaces (demo)
+Ultralytics YOLO11 · PyTorch · OpenCV · pandas · Roboflow (annotation) · Google Colab (A100) · Gradio + Hugging Face Spaces (demo)
 
 ---
 
-## Licencia
+## Licence
 
-**Código: AGPL-3.0.**
+**Code: AGPL-3.0.**
 
-Este proyecto se construye sobre [Ultralytics YOLO11](https://github.com/ultralytics/ultralytics), distribuido bajo AGPL-3.0. Al tratarse de una licencia copyleft fuerte con cláusula de uso en red, el código derivado —incluida la demo servida desde Hugging Face Spaces— se publica bajo los mismos términos.
+This project builds on [Ultralytics YOLO11](https://github.com/ultralytics/ultralytics), distributed under AGPL-3.0. As a strong copyleft licence with a network-use clause, derivative work — including the demo served from Hugging Face Spaces — is released under the same terms.
 
-Quien quiera usar este trabajo en un producto propietario necesita una licencia empresarial de Ultralytics.
+Use in a proprietary product requires an Ultralytics Enterprise Licence.
 
-**Datos y anotaciones: CC BY 4.0.**
+**Data and annotations: CC BY 4.0.**
 
-Las 870 imágenes fueron generadas sintéticamente y anotadas manualmente por el autor.
+The 870 images were synthetically generated and manually annotated by the author.
 
-## Autor
+---
 
-Marc Rubii — [GitHub](https://github.com/marcrubii)
+## Author
+
+Marc Rubí — [GitHub](https://github.com/marcrubii)
