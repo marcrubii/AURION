@@ -1,4 +1,0 @@
-ultralytics
-gradio
-opencv-python
-numpy
