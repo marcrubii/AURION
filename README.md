@@ -254,9 +254,8 @@ r = m.val(split="test")
 ├── imagenes/  multimedia/     Site assets
 │
 ├── huggingface-space/         Gradio demo (Hugging Face Space)
-│   ├── app.py
-│   ├── requirements.txt
-│   ├── best.pt
+│   ├── app.py                 Weights are not tracked here: the Space
+│   ├── requirements.txt       loads best.pt from its own HF repo
 │   ├── data.yaml              Dataset classes used for training
 │   └── README.md              Space card
 │
