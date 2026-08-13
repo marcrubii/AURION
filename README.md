@@ -253,17 +253,21 @@ r = m.val(split="test")
 ├── lang.js                    Bilingual support
 ├── imagenes/  multimedia/     Site assets
 │
-├── app.py                     Gradio demo (Hugging Face Space)
-├── requirements.txt
+├── huggingface-space/         Gradio demo (Hugging Face Space)
+│   ├── app.py
+│   ├── requirements.txt
+│   ├── best.pt
+│   ├── data.yaml              Dataset classes used for training
+│   └── README.md              Space card
 │
 ├── ml/
 │   ├── split_aurion.py        Group-wise partitioning
+│   ├── aurion_train_colab.ipynb  Training run on Colab
 │   ├── AURION_analisis.ipynb  Robustness and error analysis
-│   ├── AURION_filtrado.ipynb  Per-scenario evaluation
-│   └── data.yaml
+│   └── AURION_filtrado.ipynb  Per-scenario evaluation
 ├── results/
-│   ├── yolo11n/               results.csv, curves, confusion matrix
-│   ├── yolo11s/  yolo11m/
+│   ├── results.csv            Per-epoch training log
+│   ├── confusion_matrix.png
 │   ├── robustez.csv
 │   ├── errores.csv
 │   └── por_escenario.csv
