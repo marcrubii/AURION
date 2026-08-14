@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="AURION: sistema de visión por computador basado en YOLOv11x para inspección automática de palets y mercancías en tiempo real.">
+  <meta name="description" content="AURION: sistema de visión por computador basado en YOLO11n para inspección automática de palets y mercancías en tiempo real.">
   <title>AURION | Inspección automática de palets</title>
   <link rel="stylesheet" href="style.css">
   <style>
@@ -891,7 +891,72 @@
       }
     }
 
-</style>
+
+    /* ===== Añadidos: métricas reales y clases interactivas ===== */
+    .data-disclaimer {
+      margin: 22px 0 0;
+      padding: 16px 20px;
+      border-left: 3px solid var(--accent);
+      background: var(--mecalux-blue-soft);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      color: var(--ink);
+      font-size: 0.93rem;
+      line-height: 1.55;
+    }
+    .data-disclaimer strong { font-weight: 900; }
+    .data-disclaimer a { color: var(--mecalux-blue); font-weight: 800; }
+
+    button.class-pill {
+      font: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+    button.class-pill:hover { transform: translateY(-2px); box-shadow: var(--shadow-soft); }
+    button.class-pill[aria-pressed="true"] {
+      background: var(--mecalux-blue);
+      color: var(--white);
+      border-color: var(--mecalux-blue);
+    }
+    button.class-pill:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+    .class-detail {
+      margin-top: 22px;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--white);
+      box-shadow: var(--shadow-soft);
+      min-height: 132px;
+    }
+    .class-detail__hint { margin: 0; color: var(--muted); font-size: 0.95rem; }
+    .class-detail__name { margin: 0 0 6px; font-size: 1.12rem; font-weight: 900; color: var(--ink); }
+    .class-detail__code {
+      display: inline-block; margin-bottom: 14px; padding: 3px 10px;
+      border-radius: 999px; background: var(--mecalux-blue-soft);
+      color: var(--mecalux-blue); font-size: 0.74rem; font-weight: 800;
+      font-family: ui-monospace, Menlo, monospace;
+    }
+    .class-detail__desc { margin: 0 0 18px; color: var(--muted); font-size: 0.95rem; max-width: 60ch; }
+    .class-detail__bars { display: grid; gap: 12px; }
+    .class-bar { display: grid; grid-template-columns: minmax(0, 1fr) 54px; gap: 14px; align-items: center; }
+    .class-bar small {
+      display: block; color: var(--muted); font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.07em; font-size: 0.68rem;
+    }
+    .class-bar__track { height: 7px; margin-top: 6px; border-radius: 999px; background: var(--mecalux-blue-soft); overflow: hidden; }
+    .class-bar__fill {
+      display: block; height: 100%; width: 0; border-radius: 999px;
+      background: linear-gradient(90deg, var(--mecalux-blue), var(--accent));
+      transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .class-bar__v { text-align: right; font-weight: 900; font-size: 0.9rem; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+    @media (prefers-reduced-motion: reduce) {
+      button.class-pill, .class-bar__fill { transition: none; }
+    }
+
+  </style>
 </head>
 <body>
   <header class="site-header">
@@ -919,7 +984,7 @@
         <div class="aurion-hero-brand" aria-label="AURION">
           <img src="aurion-logo-profesional.png" alt="AURION · Inspección inteligente para logística industrial">
         </div>
-        <p class="eyebrow">Computer Vision · Logística industrial · YOLOv11x</p>
+        <p class="eyebrow">Computer Vision · Logística industrial · YOLO11n</p>
         <h1 id="hero-title">Inspección automática de <span>palets y mercancías</span></h1>
         <p class="hero-lead">
           Sistema de visión por computador orientado a detectar daños, anomalías y errores de embalaje en el punto de recepción, con una evaluación más rápida, objetiva y escalable que la inspección manual.
@@ -933,24 +998,30 @@
   </header>
 
   <main class="page-shell">
-    <div class="impact-grid" aria-label="Indicadores principales del problema y de la solución">
+    <div class="impact-grid" aria-label="Métricas medidas del sistema">
       <article class="metric-card reveal">
-        <small>Tiempo operativo</small>
-        <strong>+45 min</strong>
-        <p>Tiempo diario estimado dedicado a inspecciones manuales repetitivas.</p>
+        <small>Detección de palets dañados</small>
+        <strong data-count="0.901" data-dec="3">0.901</strong>
+        <p>Recall sobre palets defectuosos en el escenario de puesto de control, medido en test independiente.</p>
       </article>
       <article class="metric-card reveal reveal-delay-1">
-        <small>Riesgo de error</small>
-        <strong>30%</strong>
-        <p>Inspecciones manuales susceptibles a errores por fatiga o falta de precisión.</p>
+        <small>Precisión media mAP50</small>
+        <strong data-count="0.881" data-dec="3">0.881</strong>
+        <p>Sobre 127 imágenes que el modelo no vio durante el entrenamiento en ninguna de sus variantes.</p>
       </article>
       <article class="metric-card reveal reveal-delay-2">
-        <small>Eficiencia esperada</small>
-        <strong>+80%</strong>
-        <p>Mejora estimada al automatizar el proceso de inspección visual.</p>
+        <small>Tiempo de inferencia</small>
+        <strong data-count="6.9" data-dec="1" data-suffix=" ms">6.9 ms</strong>
+        <p>Por imagen, con un modelo de 2,6 millones de parámetros desplegable en hardware modesto.</p>
       </article>
     </div>
 
+    <p class="data-disclaimer reveal">
+      <strong>Sobre los datos:</strong> el conjunto de entrenamiento son imágenes sintéticas generadas
+      y anotadas manualmente. El sistema no se ha validado todavía sobre fotografías de una cámara
+      industrial real, así que estas cifras describen el rendimiento dentro de ese dominio.
+      <a href="resultados.html#metricas">Ver metodología y limitaciones</a>
+    </p>
     <div class="content-card">
       <section id="problema" aria-labelledby="problema-title">
         <div class="section-heading reveal">
@@ -987,7 +1058,7 @@
       <section class="divider-section" aria-labelledby="solucion-title">
         <div class="section-heading reveal">
           <p class="kicker">La solución</p>
-          <h2 id="solucion-title">Un sistema de visión por computador basado en YOLOv11x.</h2>
+          <h2 id="solucion-title">Un sistema de visión por computador basado en YOLO11n.</h2>
           <p class="lead-text">
             El modelo analiza cada imagen capturada, localiza elementos relevantes y clasifica el estado del palet, la carga y el embalaje para apoyar una decisión más objetiva en tiempo real.
           </p>
@@ -1002,7 +1073,7 @@
           <article class="step-card reveal reveal-delay-1">
             <span class="step-number">2</span>
             <strong>Detección</strong>
-            <span>YOLOv11x identifica objetos y zonas visualmente relevantes.</span>
+            <span>YOLO11n identifica objetos y zonas visualmente relevantes.</span>
           </article>
           <article class="step-card reveal reveal-delay-2">
             <span class="step-number">3</span>
@@ -1023,7 +1094,7 @@
             <p class="kicker">Modelo entrenado</p>
             <h2 id="modelo-title">Seis clases para evaluar el estado real de la mercancía.</h2>
             <p>
-              El modelo ha sido entrenado con un conjunto de datos personalizado de aproximadamente 2.600 imágenes, orientado a reconocer situaciones habituales en un entorno de recepción logística.
+              El modelo se entrenó con 870 imágenes originales generadas sintéticamente y anotadas a mano, orientadas a reproducir situaciones habituales de un puesto de recepción logística. Las particiones de validación y test se separan agrupando por imagen original, de modo que ninguna variante aumentada aparece en dos conjuntos a la vez.
             </p>
           </div>
 
@@ -1037,13 +1108,17 @@
           </div>
         </div>
 
-        <div class="classes-grid" aria-label="Clases del sistema de detección">
-          <div class="class-pill">Palet en buen estado</div>
-          <div class="class-pill">Palet dañado</div>
-          <div class="class-pill">Paquete correcto</div>
-          <div class="class-pill">Paquete incorrecto</div>
-          <div class="class-pill">Embalaje correcto</div>
-          <div class="class-pill">Embalaje defectuoso</div>
+        <div class="classes-grid" id="classes-grid" aria-label="Clases del sistema de detección">
+          <button type="button" class="class-pill" data-cls="0" aria-pressed="false">Palet en buen estado</button>
+          <button type="button" class="class-pill" data-cls="1" aria-pressed="false">Palet dañado</button>
+          <button type="button" class="class-pill" data-cls="2" aria-pressed="false">Embalaje y dimensiones correctos</button>
+          <button type="button" class="class-pill" data-cls="3" aria-pressed="false">Dimensiones incorrectas</button>
+          <button type="button" class="class-pill" data-cls="4" aria-pressed="false">Embalaje incorrecto</button>
+          <button type="button" class="class-pill" data-cls="5" aria-pressed="false">Ambos incorrectos</button>
+        </div>
+
+        <div class="class-detail" id="class-detail" aria-live="polite">
+          <p class="class-detail__hint">Selecciona una clase para ver su rendimiento medido.</p>
         </div>
       </section>
 
@@ -1112,7 +1187,7 @@
   </main>
 
   <footer class="site-footer">
-    &copy; 2025 Marc Rubí · AURION · Sistema de visión por computador para inspección logística
+    &copy; 2026 Marc Rubí · AURION · Sistema de visión por computador para inspección logística
   </footer>
   <script src="lang.js"></script>
 
@@ -1129,6 +1204,99 @@
     }, { threshold: 0.16 });
 
     revealElements.forEach((element) => observer.observe(element));
+  </script>
+
+
+  <script>
+  (function () {
+    "use strict";
+
+    /* --- Contadores de las métricas del hero --- */
+    var nums = document.querySelectorAll(".metric-card strong[data-count]");
+    function runCount(el) {
+      var target = parseFloat(el.dataset.count),
+          dec = parseInt(el.dataset.dec || "0", 10),
+          suffix = el.dataset.suffix || "",
+          dur = 950, t0 = null;
+      function frame(ts) {
+        if (!t0) t0 = ts;
+        var p = Math.min((ts - t0) / dur, 1);
+        var eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = (target * eased).toFixed(dec) + suffix;
+        if (p < 1) requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    }
+
+    if ("IntersectionObserver" in window && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      var ioN = new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          runCount(e.target); ioN.unobserve(e.target);
+        });
+      }, { threshold: 0.6 });
+      Array.prototype.forEach.call(nums, function (n) { ioN.observe(n); });
+    }
+
+    /* --- Explorador de clases --- */
+    var DATA = [
+      { code:"palet_bueno", name:"Palet en buen estado",
+        desc:"Paleta sin daños estructurales. Es la clase con más ejemplos del conjunto.",
+        ctrl:0.693, alm:0.639 },
+      { code:"palet_roto", name:"Palet dañado",
+        desc:"Paleta con tablas rotas, astilladas o deformadas. Es el defecto crítico: un fallo aquí deja pasar producto defectuoso.",
+        ctrl:0.765, alm:0.561 },
+      { code:"paquete_emb_correct_dim_correct", name:"Embalaje y dimensiones correctos",
+        desc:"Carga correctamente embalada y dentro de las dimensiones esperadas.",
+        ctrl:0.801, alm:0.659 },
+      { code:"paquete_emb_correct_dim_incorrect", name:"Dimensiones incorrectas",
+        desc:"El embalaje es correcto pero la carga excede o no alcanza las dimensiones esperadas.",
+        ctrl:0.693, alm:0.808 },
+      { code:"paquete_emb_incorrect_dim_correct", name:"Embalaje incorrecto",
+        desc:"Film mal aplicado, carga suelta o mal paletizada, con dimensiones dentro de rango.",
+        ctrl:0.790, alm:0.558 },
+      { code:"paquete_emb_incorrect_dim_incorrect", name:"Ambos incorrectos",
+        desc:"Embalaje defectuoso y dimensiones fuera de rango simultáneamente.",
+        ctrl:0.687, alm:0.805 }
+    ];
+
+    var grid = document.getElementById("classes-grid"),
+        panel = document.getElementById("class-detail");
+    if (!grid || !panel) return;
+
+    function show(i) {
+      var d = DATA[i];
+      panel.innerHTML =
+        '<p class="class-detail__name">' + d.name + '</p>' +
+        '<span class="class-detail__code">' + d.code + '</span>' +
+        '<p class="class-detail__desc">' + d.desc + '</p>' +
+        '<div class="class-detail__bars">' +
+          bar("Puesto de control", d.ctrl) +
+          bar("Almacén general", d.alm) +
+        '</div>';
+      requestAnimationFrame(function () {
+        Array.prototype.forEach.call(panel.querySelectorAll(".class-bar__fill"), function (f) {
+          f.style.width = f.dataset.w;
+        });
+      });
+    }
+    function bar(label, v) {
+      return '<div class="class-bar"><div><small>' + label + '</small>' +
+             '<div class="class-bar__track"><i class="class-bar__fill" data-w="' +
+             (v * 100).toFixed(1) + '%"></i></div></div>' +
+             '<div class="class-bar__v">' + v.toFixed(3) + '</div></div>';
+    }
+
+    Array.prototype.forEach.call(grid.querySelectorAll(".class-pill"), function (b) {
+      b.addEventListener("click", function () {
+        Array.prototype.forEach.call(grid.querySelectorAll(".class-pill"), function (x) {
+          x.setAttribute("aria-pressed", "false");
+        });
+        b.setAttribute("aria-pressed", "true");
+        show(parseInt(b.dataset.cls, 10));
+      });
+    });
+  })();
   </script>
 
 </body>

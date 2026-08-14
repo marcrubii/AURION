@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Arquitectura YOLOv11x de AURION: visión artificial para detectar palets, paquetes, daños, anomalías y errores de embalaje en logística industrial.">
+  <meta name="description" content="Arquitectura YOLO11n de AURION: visión artificial para detectar palets, paquetes, daños, anomalías y errores de embalaje en logística industrial.">
   <title>Modelo | AURION</title>
   <link rel="stylesheet" href="style.css">
   <style>
@@ -1141,7 +1141,90 @@
       }
     }
 
-</style>
+
+    /* ===== Añadidos: comparativa, umbral y confusiones ===== */
+    .mv-chart { display: grid; gap: 16px; margin-top: 8px; }
+    .mv-row { display: grid; grid-template-columns: 168px minmax(0, 1fr) 74px; gap: 18px; align-items: center; }
+    .mv-label strong { display: block; font-size: 1rem; font-weight: 900; color: var(--ink); }
+    .mv-label span { color: var(--muted); font-size: 0.78rem; font-weight: 750; }
+    .mv-track { position: relative; height: 30px; border-radius: 999px; background: var(--mecalux-blue-soft); overflow: hidden; }
+    .mv-fill {
+      display: block; height: 100%; width: 0; border-radius: 999px;
+      background: linear-gradient(90deg, var(--mecalux-blue), var(--accent));
+      transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .mv-val {
+      position: absolute; top: 50%; transform: translateY(-50%); left: 14px;
+      color: var(--white); font-weight: 900; font-size: 0.86rem; font-variant-numeric: tabular-nums;
+    }
+    .mv-time { color: var(--muted); font-weight: 800; font-size: 0.82rem; text-align: right; }
+    .mv-axis { margin: 4px 0 0; color: var(--muted); font-size: 0.78rem; font-weight: 750; }
+    .mv-note { margin: 24px 0 0; color: var(--muted); font-size: 0.95rem; line-height: 1.6; max-width: 70ch; }
+    .mv-note strong { color: var(--ink); font-weight: 900; }
+
+    .th-widget { margin-top: 10px; }
+    .th-label {
+      display: block; color: var(--muted); font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.72rem; margin-bottom: 12px;
+    }
+    .th-range { width: 100%; accent-color: var(--mecalux-blue); height: 26px; cursor: pointer; }
+    .th-range:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+    .th-value {
+      display: inline-block; margin-top: 6px; padding: 5px 14px; border-radius: 999px;
+      background: var(--mecalux-blue); color: var(--white);
+      font-weight: 900; font-variant-numeric: tabular-nums; font-size: 0.9rem;
+    }
+    .th-metrics {
+      display: grid; gap: 12px; margin-top: 22px;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+    .th-metric {
+      padding: 16px; border-radius: var(--radius-md); background: var(--white);
+      border: 1px solid var(--line); box-shadow: 0 8px 18px rgba(6, 43, 79, 0.05);
+    }
+    .th-metric small {
+      display: block; color: var(--muted); font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.07em; font-size: 0.68rem;
+    }
+    .th-metric strong {
+      display: block; margin-top: 8px; font-size: 1.55rem; line-height: 1;
+      letter-spacing: -0.03em; color: var(--ink); font-variant-numeric: tabular-nums;
+    }
+    .th-metric.is-key { border-color: var(--accent); background: var(--mecalux-blue-soft); }
+    .th-metric.is-key strong { color: var(--mecalux-blue); }
+    .th-read { margin: 18px 0 0; color: var(--muted); font-size: 0.9rem; min-height: 2.6em; }
+    .th-read b { color: var(--ink); font-weight: 900; }
+
+    .cm-flow { display: grid; gap: 10px; margin-top: 8px; }
+    .cm-item {
+      display: grid; grid-template-columns: minmax(0, 1fr) 46px; gap: 16px; align-items: center;
+      padding: 14px 18px; border-radius: var(--radius-md);
+      background: var(--white); border: 1px solid var(--line);
+    }
+    .cm-item.is-critical { border-color: #e6b8c1; background: #fdf5f6; }
+    .cm-path { font-size: 0.9rem; color: var(--ink); font-weight: 750; }
+    .cm-path em { font-style: normal; color: var(--muted); font-weight: 700; }
+    .cm-path .cm-arrow { color: var(--accent); font-weight: 900; margin: 0 8px; }
+    .cm-item.is-critical .cm-arrow { color: #c2364b; }
+    .cm-bar { height: 6px; margin-top: 8px; border-radius: 999px; background: var(--mecalux-blue-soft); overflow: hidden; }
+    .cm-bar i {
+      display: block; height: 100%; width: 0; border-radius: 999px;
+      background: linear-gradient(90deg, var(--mecalux-blue), var(--accent));
+      transition: width 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .cm-item.is-critical .cm-bar i { background: linear-gradient(90deg, #c2364b, #e08093); }
+    .cm-n { text-align: right; font-weight: 900; font-size: 1.05rem; color: var(--ink); font-variant-numeric: tabular-nums; }
+    .cm-item.is-critical .cm-n { color: #c2364b; }
+
+    @media (max-width: 720px) {
+      .mv-row { grid-template-columns: 1fr; gap: 8px; }
+      .mv-time { text-align: left; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .mv-fill, .cm-bar i { transition: none; }
+    }
+
+  </style>
 </head>
 
 <body>
@@ -1167,10 +1250,10 @@
 
     <section class="hero" aria-labelledby="hero-title">
       <div class="reveal">
-        <p class="eyebrow">AURION · Arquitectura de detección · YOLOv11x</p>
+        <p class="eyebrow">AURION · Arquitectura de detección · YOLO11n</p>
         <h1 id="hero-title">Modelo de visión <span>para inspección logística</span></h1>
         <p class="hero-lead">
-          AURION utiliza YOLOv11x para identificar palets, embalajes, anomalías dimensionales y defectos visuales en mercancías, con foco en velocidad, consistencia y aplicabilidad industrial.
+          AURION utiliza YOLO11n para identificar palets, embalajes, anomalías dimensionales y defectos visuales en mercancías, con foco en velocidad, consistencia y aplicabilidad industrial.
         </p>
         <div class="hero-actions" aria-label="Acciones principales">
           <a class="btn btn-primary" href="https://huggingface.co/spaces/MarcRubi04/AURION">Probar AURION</a>
@@ -1183,7 +1266,7 @@
           <div class="dashboard-top">
             <div>
               <small>Modelo utilizado</small>
-              <strong>YOLOv11x</strong>
+              <strong>YOLO11n</strong>
             </div>
             <div class="model-badge">AI</div>
           </div>
@@ -1216,13 +1299,13 @@
     <section class="metrics-grid" aria-label="Resumen técnico del modelo">
       <article class="metric-card reveal">
         <small>Arquitectura</small>
-        <strong>YOLOv11x</strong>
-        <p>Modelo de detección de objetos orientado a inferencia visual rápida.</p>
+        <strong>YOLO11n</strong>
+        <p>2,58 millones de parámetros y 6,4 GFLOPs. Elegido tras comparar tres tamaños.</p>
       </article>
       <article class="metric-card reveal reveal-delay-1">
         <small>Dataset</small>
-        <strong>2.600</strong>
-        <p>Imágenes anotadas manualmente y preparadas para entrenamiento supervisado.</p>
+        <strong>870</strong>
+        <p>Imágenes originales generadas sintéticamente y anotadas a mano, con partición agrupada.</p>
       </article>
       <article class="metric-card reveal reveal-delay-2">
         <small>Clases</small>
@@ -1230,9 +1313,9 @@
         <p>Categorías para palets, embalajes y dimensiones correctas o incorrectas.</p>
       </article>
       <article class="metric-card reveal reveal-delay-2">
-        <small>Entrenamiento</small>
-        <strong>300</strong>
-        <p>Iteraciones de entrenamiento con apoyo de GPU NVIDIA A100.</p>
+        <small>Inferencia</small>
+        <strong>6,9 ms</strong>
+        <p>Por imagen. Equivale a unos 145 fotogramas por segundo en una NVIDIA A100.</p>
       </article>
     </section>
 
@@ -1343,7 +1426,7 @@
           <div class="training-copy">
             <article class="info-card">
               <strong>Datos anotados manualmente</strong>
-              <p>Se utilizaron aproximadamente 2.600 imágenes anotadas para cubrir las seis clases de AURION.</p>
+              <p>Se anotaron a mano 870 imágenes originales para cubrir las seis clases de AURION. La augmentación se aplica solo al conjunto de entrenamiento, nunca antes de partir los datos.</p>
             </article>
             <article class="info-card">
               <strong>Aumento de datos</strong>
@@ -1381,7 +1464,7 @@
               <div class="timeline-dot">4</div>
               <div>
                 <strong>Pruebas comparativas</strong>
-                <p>Comparación entre YOLOv8n, YOLOv8x y YOLOv11x antes de elegir la arquitectura final.</p>
+                <p>Comparación entre YOLO11n, YOLO11s y YOLO11m en condiciones idénticas antes de fijar la arquitectura final.</p>
               </div>
             </article>
           </div>
@@ -1389,35 +1472,111 @@
       </div>
     </section>
 
-    <section class="section">
+    <section id="comparativa" class="section">
       <div class="section-card reveal">
         <div class="section-header">
           <div>
             <span class="kicker">Selección técnica</span>
-            <h2>Comparación de versiones YOLO</h2>
+            <h2>Tres tamaños, el mismo resultado</h2>
           </div>
           <p class="section-intro">
-            La elección final se basó en pruebas entre distintas versiones, priorizando potencia, arquitectura y rendimiento para detección logística.
+            Se entrenaron YOLO11n, YOLO11s y YOLO11m en condiciones idénticas: 150 épocas,
+            640 píxeles, paciencia 30 y semilla fija. Los tres quedan dentro de un punto de mAP50-95.
           </p>
         </div>
 
-        <div class="comparison-grid">
-          <article class="comparison-card">
-            <small>Base ligera</small>
-            <h3>YOLOv8n</h3>
-            <p>Versión compacta y rápida, útil para pruebas iniciales, pero con menor capacidad para patrones visuales complejos.</p>
-          </article>
-          <article class="comparison-card">
-            <small>Mayor capacidad</small>
-            <h3>YOLOv8x</h3>
-            <p>Modelo más potente que la versión nano, adecuado para comparar mejoras de precisión y robustez.</p>
-          </article>
-          <article class="comparison-card featured">
-            <small>Modelo seleccionado</small>
-            <h3>YOLOv11x</h3>
-            <p>Arquitectura final escogida por su capacidad para trabajar con detección multicategoría y escenarios visuales exigentes.</p>
-          </article>
+        <div class="mv-chart" id="mv-chart">
+          <div class="mv-row" data-m="n">
+            <div class="mv-label"><strong>YOLO11n</strong><span>2,6 M parámetros</span></div>
+            <div class="mv-track"><i class="mv-fill" data-w="74.1"></i><b class="mv-val">0.741</b></div>
+            <div class="mv-time">12,1 min</div>
+          </div>
+          <div class="mv-row" data-m="s">
+            <div class="mv-label"><strong>YOLO11s</strong><span>9,4 M parámetros</span></div>
+            <div class="mv-track"><i class="mv-fill" data-w="73.3"></i><b class="mv-val">0.733</b></div>
+            <div class="mv-time">13,3 min</div>
+          </div>
+          <div class="mv-row" data-m="m">
+            <div class="mv-label"><strong>YOLO11m</strong><span>20,1 M parámetros</span></div>
+            <div class="mv-track"><i class="mv-fill" data-w="74.4"></i><b class="mv-val">0.744</b></div>
+            <div class="mv-time">20,9 min</div>
+          </div>
+          <p class="mv-axis">Precisión mAP50-95 sobre validación · barra completa = 1.000</p>
         </div>
+
+        <p class="mv-note">
+          El modelo grande aporta <strong>0.003</strong> sobre el pequeño, con ocho veces más
+          parámetros: una diferencia dentro del ruido de un conjunto de validación de 130 imágenes.
+          Se elige el <strong>nano</strong> porque un puesto de control industrial se beneficia de
+          un modelo que corre en hardware modesto, y la capacidad extra no compra precisión medible
+          en esta tarea.
+        </p>
+      </div>
+    </section>
+
+    <section id="umbral" class="section">
+      <div class="section-card reveal">
+        <div class="section-header">
+          <div>
+            <span class="kicker">Punto de operación</span>
+            <h2>Dónde poner el umbral de decisión</h2>
+          </div>
+          <p class="section-intro">
+            El umbral de confianza decide qué detecciones se aceptan. Subirlo reduce falsas alarmas,
+            pero también deja escapar defectos. Mueve el control para ver el efecto medido.
+          </p>
+        </div>
+
+        <div class="th-widget">
+          <label class="th-label" for="th-range">Umbral de confianza</label>
+          <input class="th-range" id="th-range" type="range" min="0" max="6" step="1" value="2"
+                 aria-describedby="th-out">
+          <output class="th-value" id="th-value">0.25</output>
+
+          <div class="th-metrics" id="th-out">
+            <div class="th-metric"><small>Precisión</small><strong id="th-p">0.845</strong></div>
+            <div class="th-metric"><small>Recall global</small><strong id="th-r">0.823</strong></div>
+            <div class="th-metric is-key"><small>Recall · palet dañado</small><strong id="th-rr">0.790</strong></div>
+            <div class="th-metric"><small>mAP50</small><strong id="th-m">0.802</strong></div>
+          </div>
+
+          <p class="th-read" id="th-read"></p>
+        </div>
+
+        <p class="mv-note">
+          La precisión apenas se mueve hasta 0.6, momento en que ya se pierde recall. El motivo está
+          en los falsos positivos: su confianza media es de <strong>0.532</strong>, así que no son
+          detecciones dudosas que un umbral pueda filtrar, sino errores seguros de sí mismos.
+          Como un falso positivo cuesta una revisión manual y un falso negativo deja pasar producto
+          defectuoso, el punto de operación elegido <strong>mantiene el umbral bajo</strong>.
+        </p>
+      </div>
+    </section>
+
+    <section id="confusiones" class="section">
+      <div class="section-card reveal">
+        <div class="section-header">
+          <div>
+            <span class="kicker">Análisis de errores</span>
+            <h2>En qué se equivoca</h2>
+          </div>
+          <p class="section-intro">
+            449 errores sobre 127 imágenes de test. No se reparten al azar: hay un patrón claro
+            y va en la dirección que más importa evitar.
+          </p>
+        </div>
+
+        <div class="cm-flow" id="cm-flow"></div>
+
+        <p class="mv-note">
+          El fallo dominante es <strong>palet dañado clasificado como palet en buen estado</strong>:
+          52 casos, frente a solo 6 en la dirección contraria. Sumando los 15 palets dañados no
+          detectados, hay <strong>67 casos en los que una paleta defectuosa supera el control</strong>.
+          Esa asimetría revela un sesgo hacia declarar la mercancía correcta, que es justo la
+          dirección desfavorable en control de calidad.
+          Las confusiones entre clases de paquete se concentran en pares que comparten un atributo
+          y difieren en el otro, lo que apunta a un problema en el diseño de las cuatro categorías.
+        </p>
       </div>
     </section>
 
@@ -1516,7 +1675,7 @@
   </main>
 
   <footer class="site-footer">
-    &copy; 2025 Marc Rubí · AURION
+    &copy; 2026 Marc Rubí · AURION
   </footer>
 
   <div id="imageModal" class="modal" onclick="closeModal(event)" aria-hidden="true">
@@ -1580,5 +1739,97 @@
 
     elements.forEach(el => observer.observe(el));
   </script>
+
+  <script>
+  (function () {
+    "use strict";
+
+    /* ---- Barrido de umbral (datos medidos sobre test) ---- */
+    var SWEEP = [
+      { c:0.10, p:0.8452, r:0.8226, rr:0.7903, m:0.8200 },
+      { c:0.20, p:0.8452, r:0.8226, rr:0.7903, m:0.8098 },
+      { c:0.25, p:0.8452, r:0.8226, rr:0.7903, m:0.8023 },
+      { c:0.30, p:0.8452, r:0.8226, rr:0.7903, m:0.7940 },
+      { c:0.40, p:0.8452, r:0.8226, rr:0.7903, m:0.7818 },
+      { c:0.50, p:0.8429, r:0.8255, rr:0.7915, m:0.7722 },
+      { c:0.60, p:0.8603, r:0.7929, rr:0.7704, m:0.7439 }
+    ];
+    var rng = document.getElementById("th-range");
+    if (rng) {
+      var f = function (id) { return document.getElementById(id); };
+      var elV = f("th-value"), elP = f("th-p"), elR = f("th-r"),
+          elRR = f("th-rr"), elM = f("th-m"), elRead = f("th-read");
+
+      function draw() {
+        var d = SWEEP[parseInt(rng.value, 10)];
+        elV.textContent = d.c.toFixed(2);
+        elP.textContent = d.p.toFixed(3);
+        elR.textContent = d.r.toFixed(3);
+        elRR.textContent = d.rr.toFixed(3);
+        elM.textContent = d.m.toFixed(3);
+
+        var base = SWEEP[2];
+        if (d.c <= 0.25) {
+          elRead.innerHTML = "Punto de operación elegido. Se aceptan más detecciones y se asumen " +
+            "los falsos positivos, porque en control de calidad <b>dejar pasar un defecto cuesta " +
+            "más que revisar de más</b>.";
+        } else if (d.c < 0.6) {
+          elRead.innerHTML = "Subir el umbral hasta aquí <b>no mejora la precisión</b>: sigue en " +
+            d.p.toFixed(3) + ". Solo baja el mAP50, porque se descartan detecciones válidas.";
+        } else {
+          var perdidos = Math.round((base.rr - d.rr) * 331);
+          elRead.innerHTML = "La precisión sube a <b>" + d.p.toFixed(3) + "</b>, pero el recall sobre " +
+            "palets dañados cae a <b>" + d.rr.toFixed(3) + "</b>: unos <b>" + perdidos + " palets " +
+            "defectuosos más</b> superarían el control sobre los 331 del conjunto de test.";
+        }
+      }
+      rng.addEventListener("input", draw);
+      draw();
+    }
+
+    /* ---- Confusiones principales ---- */
+    var CM = [
+      { a:"Palet dañado", b:"Palet en buen estado", n:52, crit:true },
+      { a:"Palet dañado", b:"(no detectado)", n:15, crit:true },
+      { a:"Ambos incorrectos", b:"Embalaje incorrecto", n:13 },
+      { a:"Embalaje incorrecto", b:"Embalaje y dimensiones correctos", n:11 },
+      { a:"Ambos incorrectos", b:"Dimensiones incorrectas", n:9 },
+      { a:"Dimensiones incorrectas", b:"Ambos incorrectos", n:7 },
+      { a:"Palet en buen estado", b:"Palet dañado", n:6 }
+    ];
+    var flow = document.getElementById("cm-flow");
+    if (flow) {
+      var max = 52;
+      flow.innerHTML = CM.map(function (x) {
+        return '<div class="cm-item' + (x.crit ? " is-critical" : "") + '">' +
+          '<div><div class="cm-path">' + x.a +
+          '<span class="cm-arrow">&rarr;</span><em>' + x.b + '</em></div>' +
+          '<div class="cm-bar"><i data-w="' + (x.n / max * 100).toFixed(1) + '%"></i></div></div>' +
+          '<div class="cm-n">' + x.n + '</div></div>';
+      }).join("");
+    }
+
+    /* ---- Revelado ---- */
+    function fill(scope) {
+      Array.prototype.forEach.call(scope.querySelectorAll("[data-w]"), function (el) {
+        el.style.width = el.dataset.w.indexOf("%") > -1 ? el.dataset.w : el.dataset.w + "%";
+      });
+    }
+    var targets = ["mv-chart", "cm-flow"].map(function (id) { return document.getElementById(id); })
+                    .filter(Boolean);
+    if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          fill(e.target); io.unobserve(e.target);
+        });
+      }, { threshold: 0.25 });
+      targets.forEach(function (t) { io.observe(t); });
+    } else {
+      targets.forEach(fill);
+    }
+  })();
+  </script>
+
 </body>
 </html>

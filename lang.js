@@ -2,14 +2,202 @@
 (function () {
   const STORAGE_KEY = "aurion-language";
   const exactTranslations = {
+    "&copy; 2026 Marc Rubí · AURION · Sistema de visión por computador para inspección logística":
+      "&copy; 2026 Marc Rubí · AURION · Computer vision system for logistics inspection",
+    "© 2026 Marc Rubí · AURION · Sistema de visión por computador para inspección logística":
+      "© 2026 Marc Rubí · AURION · Computer vision system for logistics inspection",
+    "Computer Vision · Logística industrial · YOLO11n":
+      "Computer Vision · Industrial logistics · YOLO11n",
+    "Ver metodología y limitaciones": "See methodology and limitations",
+
+    /* ---------- index.html · métricas del hero ---------- */
+    "Detección de palets dañados": "Damaged pallet detection",
+    "Recall sobre palets defectuosos en el escenario de puesto de control, medido en test independiente.":
+      "Recall on defective pallets in the control-station scenario, measured on a held-out test set.",
+    "Precisión media mAP50": "Mean precision mAP50",
+    "Sobre 127 imágenes que el modelo no vio durante el entrenamiento en ninguna de sus variantes.":
+      "Across 127 images the model never saw during training, in any augmented variant.",
+    "Tiempo de inferencia": "Inference time",
+    "Por imagen, con un modelo de 2,6 millones de parámetros desplegable en hardware modesto.":
+      "Per image, with a 2.6-million-parameter model deployable on modest hardware.",
+    "Sobre los datos:": "About the data:",
+    "el conjunto de entrenamiento son imágenes sintéticas generadas y anotadas manualmente. El sistema no se ha validado todavía sobre fotografías de una cámara industrial real, así que estas cifras describen el rendimiento dentro de ese dominio.":
+      "the training set consists of synthetically generated images annotated by hand. The system has not yet been validated on footage from a real industrial camera, so these figures describe performance within that domain.",
+
+    /* ---------- index.html · dataset y clases ---------- */
+    "El modelo se entrenó con 870 imágenes originales generadas sintéticamente y anotadas a mano, orientadas a reproducir situaciones habituales de un puesto de recepción logística. Las particiones de validación y test se separan agrupando por imagen original, de modo que ninguna variante aumentada aparece en dos conjuntos a la vez.":
+      "The model was trained on 870 synthetically generated original images, annotated by hand, designed to reproduce common situations at a goods-receiving station. Validation and test partitions are split by source image, so no augmented variant appears in two sets at once.",
+    "Selecciona una clase para ver su rendimiento medido.":
+      "Select a class to see its measured performance.",
+    "Embalaje y dimensiones correctos": "Packaging and dimensions correct",
+    "Dimensiones incorrectas": "Incorrect dimensions",
+    "Embalaje incorrecto": "Incorrect packaging",
+    "Ambos incorrectos": "Both incorrect",
+    "Puesto de control": "Control station",
+    "Almacén general": "General warehouse",
+
+    /* ---------- resultados.html · partición ---------- */
+    "Validación cuantitativa": "Quantitative validation",
+    "El primer resultado era falso. Este no.": "The first result was false. This one isn't.",
+    "El conjunto de datos se aumentó antes de dividirlo, así que variantes de la misma imagen acabaron a la vez en entrenamiento y en validación. El modelo no generalizaba: reconocía fotos que ya había visto con otro brillo. Repetido con una partición agrupada por imagen original, el resultado cae 31 puntos.":
+      "The dataset was augmented before it was split, so variants of the same image ended up in both training and validation. The model was not generalising — it was recognising photos it had already seen at a different brightness. Repeated with a split grouped by source image, the result drops 31 points.",
+    "Partición aleatoria · validación": "Random split · validation",
+    "Partición agrupada · validación": "Group-wise split · validation",
+    "Partición agrupada · test independiente": "Group-wise split · held-out test",
+    "Invalidado": "Invalidated",
+    "Reportado": "Reported",
+    "La señal que lo delató: mAP50 de 0.876 en la primera época, antes de que el modelo aprendiera nada. Tras corregir la partición baja a 0.168, que es lo esperable.":
+      "The giveaway: mAP50 of 0.876 at epoch one, before the model had learned anything. After fixing the split it drops to 0.168, which is what you would expect.",
+
+    /* ---------- resultados.html · robustez ---------- */
+    "Envolvente operativa": "Operating envelope",
+    "Tolera la luz. No tolera el movimiento.": "It tolerates light. It does not tolerate motion.",
+    "Cada curva degrada el conjunto de test en una variable y mide la caída de precisión. La banda marca el margen del 10 % sobre la referencia: dentro de ella el sistema es utilizable. Cinco de las seis se quedan dentro.":
+      "Each curve degrades the test set along one variable and measures the drop in precision. The band marks a 10 % margin from the baseline: inside it, the system is usable. Five of the six stay inside.",
+    "Pasa el cursor sobre el gráfico para leer los valores. Pulsa una etiqueta para aislar su curva.":
+      "Hover over the chart to read values. Click a label to isolate its curve.",
+    "Requisito de instalación:": "Installation requirement:",
+    "obturador rápido, o captura con el palet detenido.": "fast shutter, or capture with the pallet stationary.",
+
+    /* ---------- resultados.html · escenarios ---------- */
+    "Dominio de validez": "Domain of validity",
+    "Dos escenarios, dos cifras.": "Two scenarios, two figures.",
+    "El conjunto de test contiene imágenes de puesto de control (uno a seis objetos, plano completo) y de almacén general (hasta 72 objetos a distintas profundidades). Solo las primeras corresponden al caso de uso previsto. Se reportan las dos.":
+      "The test set contains control-station images (one to six objects, full frame) and general warehouse images (up to 72 objects at varying depths). Only the former match the intended use case. Both are reported.",
+    "Conjunto completo": "Full test set",
+    "Precisión mAP50": "Precision mAP50",
+    "Precisión mAP50-95": "Precision mAP50-95",
+    "Recall global": "Overall recall",
+    "Recall · palet dañado": "Recall · damaged pallet",
+
+    /* ---------- modelo.html ---------- */
+    "2,58 millones de parámetros y 6,4 GFLOPs. Elegido tras comparar tres tamaños.":
+      "2.58 million parameters and 6.4 GFLOPs. Chosen after comparing three sizes.",
+    "Imágenes originales generadas sintéticamente y anotadas a mano, con partición agrupada.":
+      "Synthetically generated original images, hand-annotated, with a group-wise split.",
+    "Inferencia": "Inference",
+    "Por imagen. Equivale a unos 145 fotogramas por segundo en una NVIDIA A100.":
+      "Per image. Roughly 145 frames per second on an NVIDIA A100.",
+    "Se anotaron a mano 870 imágenes originales para cubrir las seis clases de AURION. La augmentación se aplica solo al conjunto de entrenamiento, nunca antes de partir los datos.":
+      "870 original images were annotated by hand to cover AURION's six classes. Augmentation is applied only to the training set, never before splitting the data.",
+    "Comparación entre YOLO11n, YOLO11s y YOLO11m en condiciones idénticas antes de fijar la arquitectura final.":
+      "Comparison between YOLO11n, YOLO11s and YOLO11m under identical conditions before settling on the final architecture.",
+    "Tres tamaños, el mismo resultado": "Three sizes, the same result",
+    "Se entrenaron YOLO11n, YOLO11s y YOLO11m en condiciones idénticas: 150 épocas, 640 píxeles, paciencia 30 y semilla fija. Los tres quedan dentro de un punto de mAP50-95.":
+      "YOLO11n, YOLO11s and YOLO11m were trained under identical conditions: 150 epochs, 640 pixels, patience 30 and a fixed seed. All three land within one mAP50-95 point of each other.",
+    "Precisión mAP50-95 sobre validación · barra completa = 1.000":
+      "mAP50-95 precision on validation · full bar = 1.000",
+    "Punto de operación": "Operating point",
+    "Dónde poner el umbral de decisión": "Where to set the decision threshold",
+    "El umbral de confianza decide qué detecciones se aceptan. Subirlo reduce falsas alarmas, pero también deja escapar defectos. Mueve el control para ver el efecto medido.":
+      "The confidence threshold decides which detections are accepted. Raising it reduces false alarms but also lets defects through. Move the slider to see the measured effect.",
+    "Umbral de confianza": "Confidence threshold",
+    "Precisión": "Precision",
+    "mAP50": "mAP50",
+    "Análisis de errores": "Error analysis",
+    "En qué se equivoca": "Where it gets things wrong",
+    "449 errores sobre 127 imágenes de test. No se reparten al azar: hay un patrón claro y va en la dirección que más importa evitar.":
+      "449 errors across 127 test images. They are not randomly distributed: there is a clear pattern, and it runs in the direction that matters most to avoid.",
+    "(no detectado)": "(not detected)",
+
+    /* ---------- demo.html ---------- */
+    "Modelo desplegado": "Deployed model",
+    "2,58 millones de parámetros. Ligero a propósito: 6,9 ms por imagen en GPU.":
+      "2.58 million parameters. Deliberately lightweight: 6.9 ms per image on GPU.",
+    "Versión web lista para probar el sistema sin instalación local. Acepta imagen o vídeo.":
+      "Web version ready to test the system with no local install. Accepts images or video.",
+    "El espacio se suspende por inactividad: la primera carga puede tardar unos 30 segundos.":
+      "The Space sleeps after inactivity: the first load may take around 30 seconds.",
+    "Antes de probar:": "Before you try it:",
+    "el modelo se entrenó con imágenes sintéticas que reproducen un puesto de control con cámara fija. Funciona mejor con fotos de un palet completo en plano frontal que con escenas de almacén abarrotadas, y es sensible al desenfoque de movimiento.":
+      "the model was trained on synthetic images reproducing a fixed-camera control station. It works better on a full frontal shot of a single pallet than on cluttered warehouse scenes, and it is sensitive to motion blur.",
+    "Ver el detalle de su dominio de validez": "See its domain of validity in detail",
+    "Accede a la versión web de AURION y prueba con tus propias imágenes o vídeos. El control de confianza ajusta cuántas detecciones se aceptan: bajarlo detecta más defectos a costa de más falsas alarmas, que es el compromiso elegido para un control de calidad.":
+      "Open the web version of AURION and try it with your own images or video. The confidence control adjusts how many detections are accepted: lowering it catches more defects at the cost of more false alarms, which is the trade-off chosen for quality control.",
+    "Pesos del YOLO11n final, entrenado con partición agrupada. Unos 5 MB.":
+      "Weights of the final YOLO11n, trained with a group-wise split. Around 5 MB.",
+    "870 imágenes originales con sus anotaciones. El script de partición está en el repositorio.":
+      "870 original images with their annotations. The splitting script is in the repository.",
+
+    /* ============================================================
+       AMPLIACIÓN · fragmentos partidos por etiquetas inline
+       Las frases con <strong> dentro se dividen en varios nodos de
+       texto, y el traductor trabaja nodo a nodo. Por eso cada trozo
+       necesita su propia entrada.
+       ============================================================ */
+
+    /* ---------- Común ---------- */
+    "&copy; 2026 Marc Rubí · AURION": "&copy; 2026 Marc Rubí · AURION",
+    "AURION · Arquitectura de detección · YOLO11n":
+      "AURION · Detection architecture · YOLO11n",
+    "Un sistema de visión por computador basado en YOLO11n.":
+      "A YOLO11n-based computer vision system.",
+    "YOLO11n identifica objetos y zonas visualmente relevantes.":
+      "YOLO11n identifies visually relevant objects and areas.",
+    "AURION utiliza YOLO11n para identificar palets, embalajes, anomalías dimensionales y defectos visuales en mercancía logística.":
+      "AURION uses YOLO11n to identify pallets, packaging, dimensional anomalies and visual defects in logistics goods.",
+    "Explicación de YOLO11n, dataset, clases, entrenamiento, resultados y limitaciones del sistema.":
+      "An account of YOLO11n, the dataset, classes, training, results and limitations of the system.",
+
+    /* ---------- resultados.html · robustez (fragmentos) ---------- */
+    "La asimetría es lo interesante: un desenfoque uniforme de kernel 15 cuesta un 5.7 %, mientras que un desenfoque":
+      "The asymmetry is the interesting part: a uniform blur at kernel 15 costs 5.7 %, whereas a",
+    "direccional": "directional",
+    "de kernel 11 cuesta un 30.7 %. El palet se identifica por sus tablas horizontales, y un barrido horizontal las emborrona justo en la dirección que las destruye.":
+      "blur at kernel 11 costs 30.7 %. Pallets are identified by their horizontal slats, and a horizontal smear blurs them in exactly the direction that destroys them.",
+
+    /* ---------- resultados.html · escenarios (fragmentos) ---------- */
+    "En control de calidad la cifra que decide no es la precisión media, sino el":
+      "In quality control the deciding figure is not mean precision but",
+    "recall sobre palets dañados": "recall on damaged pallets",
+    ": qué proporción de defectos se detecta. Dentro del dominio de diseño es de 0.901.":
+      ": what proportion of defects is caught. Within the design domain it is 0.901.",
+
+    /* ---------- modelo.html · comparativa (fragmentos) ---------- */
+    "2,6 M parámetros": "2.6 M parameters",
+    "9,4 M parámetros": "9.4 M parameters",
+    "20,1 M parámetros": "20.1 M parameters",
+    "El modelo grande aporta": "The large model adds",
+    "sobre el pequeño, con ocho veces más parámetros: una diferencia dentro del ruido de un conjunto de validación de 130 imágenes. Se elige el":
+      "over the small one, with eight times the parameters — a difference within the noise of a 130-image validation set. The choice is the",
+    "nano": "nano",
+    "porque un puesto de control industrial se beneficia de un modelo que corre en hardware modesto, y la capacidad extra no compra precisión medible en esta tarea.":
+      ", because an industrial control station benefits from a model that runs on modest hardware, and the extra capacity buys no measurable accuracy on this task.",
+
+    /* ---------- modelo.html · umbral (fragmentos) ---------- */
+    "La precisión apenas se mueve hasta 0.6, momento en que ya se pierde recall. El motivo está en los falsos positivos: su confianza media es de":
+      "Precision barely moves up to 0.6, by which point recall is already degrading. The reason lies in the false positives: their mean confidence is",
+    ", así que no son detecciones dudosas que un umbral pueda filtrar, sino errores seguros de sí mismos. Como un falso positivo cuesta una revisión manual y un falso negativo deja pasar producto defectuoso, el punto de operación elegido":
+      ", so they are not borderline detections a threshold can filter out but confident errors. Since a false positive costs a manual re-check while a false negative ships a defective unit, the chosen operating point",
+    "mantiene el umbral bajo": "keeps the threshold low",
+
+    /* ---------- modelo.html · errores (fragmentos) ---------- */
+    "El fallo dominante es": "The dominant failure is",
+    "palet dañado clasificado como palet en buen estado":
+      "a damaged pallet classified as a pallet in good condition",
+    ": 52 casos, frente a solo 6 en la dirección contraria. Sumando los 15 palets dañados no detectados, hay":
+      ": 52 cases, against only 6 in the opposite direction. Adding the 15 undetected damaged pallets, there are",
+    "67 casos en los que una paleta defectuosa supera el control":
+      "67 cases in which a defective pallet passes inspection",
+    ". Esa asimetría revela un sesgo hacia declarar la mercancía correcta, que es justo la dirección desfavorable en control de calidad. Las confusiones entre clases de paquete se concentran en pares que comparten un atributo y difieren en el otro, lo que apunta a un problema en el diseño de las cuatro categorías.":
+      ". That asymmetry reveals a bias towards declaring goods acceptable, which is precisely the unfavourable direction for quality control. Misclassifications among the packaging classes cluster in pairs sharing one attribute and differing in the other, pointing to a problem in the design of the four categories.",
+
+    /* ---------- demo.html ---------- */
+    "Si quieres reproducir la prueba, descarga los recursos y ejecuta el pipeline en Google Colab con tus propias imágenes. El mismo cuaderno permite además volver a calcular las métricas publicadas sobre el conjunto de test, para comprobar que los números de esta web salen de donde se dice.":
+      "To reproduce the test, download the resources and run the pipeline in Google Colab with your own images. The same notebook also recomputes the published metrics on the test set, so you can verify that the numbers on this site come from where it says they do.",
+
+    /* ---------- Últimas cadenas detectadas ---------- */
+    "AURION utiliza YOLO11n para identificar palets, embalajes, anomalías dimensionales y defectos visuales en mercancías, con foco en velocidad, consistencia y aplicabilidad industrial.":
+      "AURION uses YOLO11n to identify pallets, packaging, dimensional anomalies and visual defects in goods, with a focus on speed, consistency and industrial applicability.",
+
     "AURION | Inspección automática de palets": "AURION | Automatic pallet inspection",
-    "AURION: sistema de visión por computador basado en YOLOv11x para inspección automática de palets y mercancías en tiempo real.": "AURION: YOLOv11x-based computer vision system for automatic real-time inspection of pallets and goods.",
+    "AURION: sistema de visión por computador basado en YOLO11n para inspección automática de palets y mercancías en tiempo real.": "AURION: YOLO11n-based computer vision system for automatic real-time inspection of pallets and goods.",
     "Resultados | AURION": "Results | AURION",
     "Resultados visuales de AURION: inspección con IA para detectar daños, anomalías y errores de embalaje en palets y mercancías logísticas.": "AURION visual results: AI inspection to detect damage, anomalies and packaging errors in pallets and logistics goods.",
     "Demo | AURION": "Demo | AURION",
     "Prueba la demo online de AURION: visión artificial para inspección automática de palets, mercancías, daños y errores de embalaje.": "Try the AURION online demo: computer vision for automatic inspection of pallets, goods, damage and packaging errors.",
     "Modelo | AURION": "Model | AURION",
-    "Arquitectura YOLOv11x de AURION: visión artificial para detectar palets, paquetes, daños, anomalías y errores de embalaje en logística industrial.": "AURION YOLOv11x architecture: computer vision to detect pallets, packages, damage, anomalies and packaging errors in industrial logistics.",
+    "Arquitectura YOLO11n de AURION: visión artificial para detectar palets, paquetes, daños, anomalías y errores de embalaje en logística industrial.": "AURION YOLO11n architecture: computer vision to detect pallets, packages, damage, anomalies and packaging errors in industrial logistics.",
     "Contacto | AURION": "Contact | AURION",
     "Contacto de AURION: solución de visión artificial para inspección inteligente de palets, mercancías, daños y errores de embalaje.": "AURION contact: computer vision solution for intelligent inspection of pallets, goods, damage and packaging errors.",
     "Problema": "Problem",
@@ -17,7 +205,6 @@
     "Modelo": "Model",
     "Contacto": "Contact",
     "Inicio": "Home",
-    "Computer Vision · Logística industrial · YOLOv11x": "Computer Vision · Industrial logistics · YOLOv11x",
     "Computer Vision · Logística industrial · UPC": "Computer Vision · Industrial logistics · UPC",
     "Identidad del proyecto": "Project identity",
     "Abrir web de la UPC": "Open the UPC website",
@@ -48,12 +235,10 @@
     "Por eso se plantea una solución automática capaz de aportar consistencia, rapidez y trazabilidad al proceso de control visual en la entrada de mercancías.": "That is why an automated solution is proposed to bring consistency, speed and traceability to visual control at goods intake.",
     "Punto de recepción logística: lugar ideal para integrar una cámara fija y automatizar el control visual.": "Logistics receiving point: an ideal place to integrate a fixed camera and automate visual control.",
     "La solución": "The solution",
-    "Un sistema de visión por computador basado en YOLOv11x.": "A YOLOv11x-based computer vision system.",
     "El modelo analiza cada imagen capturada, localiza elementos relevantes y clasifica el estado del palet, la carga y el embalaje para apoyar una decisión más objetiva en tiempo real.": "The model analyzes each captured image, locates relevant elements and classifies the condition of the pallet, load and packaging to support a more objective real-time decision.",
     "Captura": "Capture",
     "Una cámara fija registra cada palet en el punto de entrada.": "A fixed camera records each pallet at the entry point.",
     "Detección": "Detection",
-    "YOLOv11x identifica objetos y zonas visualmente relevantes.": "YOLOv11x identifies visually relevant objects and areas.",
     "Clasificación": "Classification",
     "El sistema diferencia estados correctos, daños y anomalías.": "The system distinguishes correct conditions, damage and anomalies.",
     "Decisión": "Decision",
@@ -213,10 +398,8 @@
     "Ver detalles del modelo": "View model details",
     "Resumen de funcionamiento": "Workflow overview",
     "Resumen de accesos": "Access overview",
-    "AURION · Arquitectura de detección · YOLOv11x": "AURION · Detection architecture · YOLOv11x",
     "Modelo de visión": "Vision model",
     "para inspección logística": "for logistics inspection",
-    "AURION utiliza YOLOv11x para identificar palets, embalajes, anomalías dimensionales y defectos visuales en mercancías, con foco en velocidad, consistencia y aplicabilidad industrial.": "AURION uses YOLOv11x to identify pallets, packaging, dimensional anomalies and visual defects in goods, focusing on speed, consistency and industrial applicability.",
     "Probar AURION": "Try AURION",
     "Ver dataset": "View dataset",
     "Modelo utilizado": "Model used",
@@ -269,7 +452,7 @@
     "300 iteraciones": "300 iterations",
     "Entrenamiento prolongado para ajustar detección, localización y clasificación.": "Extended training to tune detection, localization and classification.",
     "Pruebas comparativas": "Comparative tests",
-    "Comparación entre YOLOv8n, YOLOv8x y YOLOv11x antes de elegir la arquitectura final.": "Comparison between YOLOv8n, YOLOv8x and YOLOv11x before choosing the final architecture.",
+    "Comparación entre YOLOv8n, YOLOv8x y YOLO11n antes de elegir la arquitectura final.": "Comparison between YOLOv8n, YOLOv8x and YOLO11n before choosing the final architecture.",
     "Selección técnica": "Technical selection",
     "Comparación de versiones YOLO": "Comparison of YOLO versions",
     "La elección final se basó en pruebas entre distintas versiones, priorizando potencia, arquitectura y rendimiento para detección logística.": "The final choice was based on tests across different versions, prioritizing power, architecture and performance for logistics detection.",
@@ -322,7 +505,6 @@
     "Esta sección facilita que cualquier evaluador, mentor o colaborador entienda rápidamente qué tipo de conversación puede iniciar.": "This section helps any evaluator, mentor or collaborator quickly understand what kind of conversation they can start.",
     "Técnico": "Technical",
     "Modelo y entrenamiento": "Model and training",
-    "Explicación de YOLOv11x, dataset, clases, entrenamiento, resultados y limitaciones del sistema.": "Explanation of YOLOv11x, dataset, classes, training, results and system limitations.",
     "Pruebas y validación": "Testing and validation",
     "Revisión de la demo online, ejemplos de uso y posibles escenarios de prueba con nuevas imágenes.": "Review of the online demo, usage examples and possible test scenarios with new images.",
     "Industria": "Industry",

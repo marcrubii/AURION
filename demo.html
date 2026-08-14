@@ -927,7 +927,22 @@
       }
     }
 
-</style>
+
+    /* ===== Añadido: aviso de dominio ===== */
+    .demo-notice {
+      margin: 22px 0 0;
+      padding: 16px 20px;
+      border-left: 3px solid var(--accent);
+      background: var(--mecalux-blue-soft);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      color: var(--ink);
+      font-size: 0.93rem;
+      line-height: 1.55;
+    }
+    .demo-notice strong { font-weight: 900; }
+    .demo-notice a { color: var(--mecalux-blue); font-weight: 800; }
+
+  </style>
 </head>
 <body>
   <header class="site-header">
@@ -996,19 +1011,27 @@
       <article class="overview-card reveal">
         <small>Acceso rápido</small>
         <strong>Demo online</strong>
-        <p>Versión web lista para probar el sistema sin instalación local.</p>
+        <p>Versión web lista para probar el sistema sin instalación local. Acepta imagen o vídeo.</p>
       </article>
       <article class="overview-card reveal reveal-delay-1">
-        <small>Uso avanzado</small>
-        <strong>Colab + archivos</strong>
-        <p>Descarga pesos, configuración y dataset para ejecutar tus propias pruebas.</p>
+        <small>Modelo desplegado</small>
+        <strong>YOLO11n</strong>
+        <p>2,58 millones de parámetros. Ligero a propósito: 6,9 ms por imagen en GPU.</p>
       </article>
       <article class="overview-card reveal reveal-delay-2">
         <small>Entorno</small>
         <strong>CPU gratuita</strong>
-        <p>La demo web corre en entorno gratuito, así que los tiempos pueden variar según la carga.</p>
+        <p>El espacio se suspende por inactividad: la primera carga puede tardar unos 30 segundos.</p>
       </article>
     </section>
+
+    <p class="demo-notice reveal">
+      <strong>Antes de probar:</strong> el modelo se entrenó con imágenes sintéticas que reproducen
+      un puesto de control con cámara fija. Funciona mejor con fotos de un palet completo en plano
+      frontal que con escenas de almacén abarrotadas, y es sensible al desenfoque de movimiento.
+      <a href="resultados.html#metricas">Ver el detalle de su dominio de validez</a>
+    </p>
+
 
     <section class="section" id="demo-online">
       <div class="section-card reveal">
@@ -1018,7 +1041,7 @@
             <h2>Prueba AURION tú mismo</h2>
           </div>
           <p class="section-intro">
-            Accede a la versión web de AURION y realiza pruebas con tus propios inputs para visualizar el comportamiento del modelo en un entorno interactivo.
+            Accede a la versión web de AURION y prueba con tus propias imágenes o vídeos. El control de confianza ajusta cuántas detecciones se aceptan: bajarlo detecta más defectos a costa de más falsas alarmas, que es el compromiso elegido para un control de calidad.
           </p>
         </div>
 
@@ -1079,7 +1102,7 @@
             <h2>Implementa el modelo tú mismo</h2>
           </div>
           <p class="section-intro">
-            Si quieres reproducir la prueba, puedes descargar los recursos principales y ejecutar el pipeline directamente en Google Colab con tus propias imágenes.
+            Si quieres reproducir la prueba, descarga los recursos y ejecuta el pipeline en Google Colab con tus propias imágenes. El mismo cuaderno permite además volver a calcular las métricas publicadas sobre el conjunto de test, para comprobar que los números de esta web salen de donde se dice.
           </p>
         </div>
 
@@ -1087,7 +1110,7 @@
           <article class="resource-box">
             <span class="resource-tag">Pesos</span>
             <h3>best.pt</h3>
-            <p>Archivo con los mejores pesos del modelo entrenado y listo para inferencia.</p>
+            <p>Pesos del YOLO11n final, entrenado con partición agrupada. Unos 5 MB.</p>
           </article>
           <article class="resource-box">
             <span class="resource-tag">Config</span>
@@ -1097,7 +1120,7 @@
           <article class="resource-box">
             <span class="resource-tag">Dataset</span>
             <h3>Imágenes y labels</h3>
-            <p>Conjunto de datos utilizado para el entrenamiento, útil para reproducibilidad y validación.</p>
+            <p>870 imágenes originales con sus anotaciones. El script de partición está en el repositorio.</p>
           </article>
         </div>
 
@@ -1153,63 +1176,87 @@
               <button class="copy-button" type="button" id="copyCodeButton">Copiar código</button>
             </div>
 
-            <pre><code id="colabCode"># Instalar ultralytics
+            <pre><code id="colabCode"># ============================================================
+# AURION - Inferencia y evaluacion
+# Modelo: YOLO11n (2,58 M parametros), entrenado con particion
+# agrupada por imagen original para evitar fuga de datos.
+# ============================================================
+
 !pip install -q ultralytics
 
-# Subir imagenes_nuevas.zip (imágenes que quieras predecir), best.pt y data.yaml
 from google.colab import files
+import os, glob, shutil
+
+# Sube best.pt, data.yaml y un .zip con las imagenes que quieras analizar
 uploaded = files.upload()
 
-# Extraer imágenes
-!rm -rf /content/imagenes_nuevas/
+
+# ------------------------------------------------------------
+# 1. Preparar las imagenes
+# ------------------------------------------------------------
+!rm -rf /content/imagenes_nuevas
 !mkdir -p /content/imagenes_nuevas
 !unzip -oq imagenes_nuevas.zip -d /content/imagenes_nuevas
 
-# Mover imágenes desde subcarpetas
-import os, glob, shutil
+EXT = ('.jpg', '.jpeg', '.png', '.bmp', '.tif', '.tiff', '.webp')
 for ruta in glob.glob('/content/imagenes_nuevas/**/*.*', recursive=True):
-    if ruta.lower().endswith(('.jpg', '.jpeg', '.png', '.bmp', '.tif', '.tiff', '.webp')):
-        try:
-            nombre = os.path.basename(ruta)
-            destino = os.path.join('/content/imagenes_nuevas/', nombre)
-            if not os.path.samefile(ruta, destino):
-                shutil.move(ruta, destino)
-        except Exception:
-            pass
+    if not ruta.lower().endswith(EXT):
+        continue
+    destino = os.path.join('/content/imagenes_nuevas', os.path.basename(ruta))
+    if os.path.abspath(ruta) != os.path.abspath(destino):
+        shutil.move(ruta, destino)
 
-# Autolabel con best.pt, utilizamos el archivo para que pongan las labels de las predicciones
+
+# ------------------------------------------------------------
+# 2. Predecir
+#
+# conf=0.25 es el punto de operacion elegido, y no es arbitrario.
+# En el conjunto de test la precision se mantiene plana entre 0.10
+# y 0.50; solo sube a partir de 0.60, y para entonces el recall
+# sobre palets danados ya ha caido de 0.790 a 0.770.
+#
+# La razon de fondo es el coste asimetrico de los dos errores:
+# un falso positivo cuesta una revision manual, un falso negativo
+# deja pasar producto defectuoso. Por eso se prefiere un umbral
+# bajo y asumir alguna falsa alarma.
+#
+# Si tu caso de uso penaliza mas las falsas alarmas, subelo.
+# ------------------------------------------------------------
+CONF = 0.25
+
 !yolo detect predict model=best.pt \
   source=/content/imagenes_nuevas \
-  save_txt \
-  save_conf \
-  project=/content/predicciones \
-  name=resultados
+  conf={CONF} \
+  save_txt save_conf \
+  project=/content/predicciones name=resultados
 
-# Filtrar por confianza ≥ 0.7 (puedes variar el parámetro de confianza; a mayor confianza,
-# es más probable que prediga menos clases)
-ruta_labels = '/content/predicciones/resultados/labels'
-filtradas = '/content/predicciones_filtradas'
-if os.path.exists(filtradas):
-    shutil.rmtree(filtradas)
-os.makedirs(filtradas, exist_ok=True)
 
-for archivo in os.listdir(ruta_labels):
-    if archivo.endswith('.txt'):
-        ruta = os.path.join(ruta_labels, archivo)
-        lineas_filtradas = []
-        with open(ruta, 'r') as f:
-            for linea in f:
-                partes = linea.strip().split()
-                if len(partes) > 5 and float(partes[-1]) >= 0.7:
-                    lineas_filtradas.append(' '.join(partes[:-1]))
-        if lineas_filtradas:
-            with open(os.path.join(filtradas, archivo), 'w') as f:
-                f.write('\n'.join(lineas_filtradas))
+# ------------------------------------------------------------
+# 3. Reproducir las metricas publicadas
+#
+# Requiere el dataset con la particion agrupada (ver
+# split_aurion.py en el repositorio). El resultado deberia
+# coincidir con lo que aparece en la web: mAP50 de 0.859
+# y mAP50-95 de 0.681 sobre el test completo.
+# ------------------------------------------------------------
+from ultralytics import YOLO
 
-# Comprimir y descargar
-!zip -qr /content/labels_filtradas.zip /content/predicciones_filtradas
-from google.colab import files
-files.download('/content/labels_filtradas.zip')</code></pre>
+modelo = YOLO('best.pt')
+metricas = modelo.val(data='data.yaml', split='test')
+
+print(f"mAP50     {metricas.box.map50:.4f}")
+print(f"mAP50-95  {metricas.box.map:.4f}")
+print()
+for i, nombre in modelo.names.items():
+    print(f"  {nombre:.&lt;45} {metricas.box.maps[i]:.4f}")
+
+
+# ------------------------------------------------------------
+# 4. Descargar las etiquetas generadas
+# ------------------------------------------------------------
+!zip -qr /content/etiquetas.zip /content/predicciones/resultados/labels
+files.download('/content/etiquetas.zip')
+</code></pre>
           </details>
         </div>
       </div>
@@ -1231,7 +1278,7 @@ files.download('/content/labels_filtradas.zip')</code></pre>
   </main>
 
   <footer class="site-footer">
-    &copy; 2025 Marc Rubí · AURION
+    &copy; 2026 Marc Rubí · AURION
   </footer>
 
   <script src="lang.js"></script>

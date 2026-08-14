@@ -978,7 +978,145 @@
       }
     }
 
-</style>
+
+    /* ===== Validación cuantitativa (nuevo) ===== */
+    .qr-stack { display: grid; gap: 22px; }
+    .qr-alert { color: #c2364b; }
+
+    .qr-splits { display: grid; gap: 12px; margin-top: 26px; }
+    .qr-split {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px 18px;
+      align-items: center;
+      padding: 18px 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--white);
+      box-shadow: 0 8px 18px rgba(6, 43, 79, 0.05);
+    }
+    .qr-split__name { font-weight: 750; color: var(--ink); font-size: 0.98rem; }
+    .qr-split__tag {
+      display: inline-block; margin-left: 10px; padding: 3px 10px;
+      border-radius: 999px; font-size: 0.66rem; font-weight: 900;
+      letter-spacing: 0.09em; text-transform: uppercase;
+      border: 1px solid currentColor;
+    }
+    .qr-split__val {
+      font-variant-numeric: tabular-nums; font-size: 1.5rem;
+      font-weight: 900; letter-spacing: -0.03em; color: currentColor;
+    }
+    .qr-split__track {
+      grid-column: 1 / -1; height: 5px; border-radius: 999px;
+      background: var(--mecalux-blue-soft); overflow: hidden;
+    }
+    .qr-split__fill {
+      display: block; height: 100%; width: 0; border-radius: 999px;
+      background: currentColor;
+      transition: width 1.15s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .qr-seen .qr-split__fill { width: var(--w); }
+    .qr-void { color: #93a2b6; }
+    .qr-void .qr-split__name { text-decoration: line-through; }
+    .qr-mid  { color: var(--muted); }
+    .qr-good { color: var(--mecalux-blue); }
+
+    .qr-callout {
+      margin: 24px 0 0; padding: 14px 18px;
+      border-left: 3px solid var(--accent);
+      background: var(--mecalux-blue-soft);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      color: var(--ink); font-size: 0.94rem;
+    }
+
+    /* --- Gráfico --- */
+    .qr-chart { margin-top: 26px; }
+    .qr-chart__svg { width: 100%; height: auto; display: block; overflow: visible; }
+    .qr-curve {
+      fill: none; stroke-linecap: round; stroke-linejoin: round;
+      transition: opacity 0.2s ease;
+    }
+    .qr-curve.is-off, .qr-dot.is-off { opacity: 0.12; }
+    .qr-dot { transition: opacity 0.2s ease; }
+
+    .qr-keys { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+    .qr-key {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 14px; border-radius: 999px; cursor: pointer;
+      font: inherit; font-size: 0.8rem; font-weight: 800;
+      background: var(--white); color: var(--muted);
+      border: 1px solid var(--line); transition: 0.18s ease;
+    }
+    .qr-key:hover { transform: translateY(-1px); box-shadow: var(--shadow-soft); }
+    .qr-key[aria-pressed="true"] { color: var(--ink); border-color: currentColor; }
+    .qr-key__dot { width: 9px; height: 9px; border-radius: 50%; background: currentColor; }
+
+    .qr-readout {
+      margin: 18px 0 0; padding-top: 16px; border-top: 1px solid var(--line);
+      color: var(--muted); font-size: 0.88rem; min-height: 3em;
+      font-variant-numeric: tabular-nums;
+    }
+    .qr-readout b { color: var(--ink); font-weight: 900; }
+
+    /* --- Escenarios --- */
+    .qr-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 26px; }
+    .qr-tab {
+      padding: 10px 18px; border-radius: 999px; cursor: pointer;
+      font: inherit; font-size: 0.84rem; font-weight: 800;
+      background: var(--white); color: var(--muted);
+      border: 1px solid var(--line); transition: 0.18s ease;
+    }
+    .qr-tab[aria-selected="true"] {
+      background: var(--mecalux-blue); color: var(--white);
+      border-color: var(--mecalux-blue);
+    }
+    .qr-scope { margin: 14px 0 22px; color: var(--muted); font-size: 0.9rem; }
+
+    .qr-metrics {
+      display: grid; gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    }
+    .qr-metric {
+      padding: 18px; border-radius: var(--radius-md);
+      background: var(--white); border: 1px solid var(--line);
+      box-shadow: 0 8px 18px rgba(6, 43, 79, 0.05);
+    }
+    .qr-metric small {
+      display: block; color: var(--muted); font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.7rem;
+    }
+    .qr-metric strong {
+      display: block; margin-top: 8px; font-size: 1.7rem;
+      line-height: 1; letter-spacing: -0.03em;
+      color: var(--ink); font-variant-numeric: tabular-nums;
+    }
+    .qr-metric.is-key { border-color: var(--accent); background: var(--mecalux-blue-soft); }
+    .qr-metric.is-key strong { color: var(--mecalux-blue); }
+
+    .qr-classes { display: grid; gap: 12px; margin-top: 22px; }
+    .qr-class { display: grid; grid-template-columns: minmax(0, 1fr) 54px; gap: 16px; align-items: center; }
+    .qr-class__n { color: var(--muted); font-size: 0.82rem; font-weight: 750; }
+    .qr-class__track { height: 7px; border-radius: 999px; background: var(--mecalux-blue-soft); overflow: hidden; margin-top: 6px; }
+    .qr-class__fill {
+      display: block; height: 100%; border-radius: 999px;
+      background: linear-gradient(90deg, var(--mecalux-blue), var(--accent));
+      transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .qr-class__v { text-align: right; font-weight: 900; font-size: 0.9rem; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+    .qr-foot { margin: 22px 0 0; color: var(--muted); font-size: 0.92rem; max-width: 68ch; }
+    .qr-foot strong { color: var(--ink); font-weight: 900; }
+
+    @media (max-width: 640px) {
+      .qr-split { grid-template-columns: 1fr; }
+      .qr-split__val { text-align: left; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .qr-split__fill, .qr-class__fill, .qr-curve { transition: none; }
+      .qr-split__fill { width: var(--w); }
+    }
+
+  </style>
 </head>
 
 <body>
@@ -1059,6 +1197,106 @@
         <p>La página reúne ejemplos visuales en imágenes y vídeos para presentar el rendimiento de forma clara.</p>
       </article>
     </div>
+
+    <section id="metricas" class="section" aria-labelledby="metricas-title">
+      <div class="qr-stack">
+
+        <article class="section-card reveal">
+          <div class="section-header">
+            <div>
+              <p class="kicker">Validación cuantitativa</p>
+              <h2 id="metricas-title">El primer resultado era falso. Este no.</h2>
+            </div>
+          </div>
+          <p class="section-intro">
+            El conjunto de datos se aumentó antes de dividirlo, así que variantes de la misma
+            imagen acabaron a la vez en entrenamiento y en validación. El modelo no generalizaba:
+            reconocía fotos que ya había visto con otro brillo. Repetido con una partición
+            agrupada por imagen original, el resultado cae 31 puntos.
+          </p>
+
+          <div class="qr-splits">
+            <div class="qr-split qr-void">
+              <div class="qr-split__name">Partición aleatoria · validación<span class="qr-split__tag">Invalidado</span></div>
+              <div class="qr-split__val">0.988</div>
+              <div class="qr-split__track"><i class="qr-split__fill" style="--w:98.8%"></i></div>
+            </div>
+            <div class="qr-split qr-mid">
+              <div class="qr-split__name">Partición agrupada · validación</div>
+              <div class="qr-split__val">0.741</div>
+              <div class="qr-split__track"><i class="qr-split__fill" style="--w:74.1%"></i></div>
+            </div>
+            <div class="qr-split qr-good">
+              <div class="qr-split__name">Partición agrupada · test independiente<span class="qr-split__tag">Reportado</span></div>
+              <div class="qr-split__val">0.681</div>
+              <div class="qr-split__track"><i class="qr-split__fill" style="--w:68.1%"></i></div>
+            </div>
+          </div>
+
+          <p class="qr-callout">
+            La señal que lo delató: mAP50 de 0.876 en la primera época, antes de que el modelo
+            aprendiera nada. Tras corregir la partición baja a 0.168, que es lo esperable.
+          </p>
+        </article>
+
+        <article class="section-card reveal">
+          <div class="section-header">
+            <div>
+              <p class="kicker">Envolvente operativa</p>
+              <h2>Tolera la luz. No tolera el movimiento.</h2>
+            </div>
+          </div>
+          <p class="section-intro">
+            Cada curva degrada el conjunto de test en una variable y mide la caída de precisión.
+            La banda marca el margen del 10 % sobre la referencia: dentro de ella el sistema
+            es utilizable. Cinco de las seis se quedan dentro.
+          </p>
+
+          <div class="qr-chart">
+            <svg class="qr-chart__svg" viewBox="0 0 720 330" role="img"
+                 aria-label="Curvas de degradación de la precisión frente a seis alteraciones de imagen">
+              <g id="qr-grid"></g><g id="qr-band"></g><g id="qr-curves"></g><g id="qr-hover"></g>
+            </svg>
+            <div class="qr-keys" id="qr-keys" role="group" aria-label="Filtrar curvas"></div>
+            <p class="qr-readout" id="qr-readout">Pasa el cursor sobre el gráfico para leer los valores. Pulsa una etiqueta para aislar su curva.</p>
+          </div>
+
+          <p class="qr-foot">
+            La asimetría es lo interesante: un desenfoque uniforme de kernel 15 cuesta un 5.7 %,
+            mientras que un desenfoque <strong>direccional</strong> de kernel 11 cuesta un 30.7 %.
+            El palet se identifica por sus tablas horizontales, y un barrido horizontal las
+            emborrona justo en la dirección que las destruye.
+            <strong>Requisito de instalación:</strong> obturador rápido, o captura con el palet detenido.
+          </p>
+        </article>
+
+        <article class="section-card reveal">
+          <div class="section-header">
+            <div>
+              <p class="kicker">Dominio de validez</p>
+              <h2>Dos escenarios, dos cifras.</h2>
+            </div>
+          </div>
+          <p class="section-intro">
+            El conjunto de test contiene imágenes de puesto de control (uno a seis objetos, plano
+            completo) y de almacén general (hasta 72 objetos a distintas profundidades). Solo las
+            primeras corresponden al caso de uso previsto. Se reportan las dos.
+          </p>
+
+          <div class="qr-tabs" id="qr-tabs" role="tablist"></div>
+          <p class="qr-scope" id="qr-scope"></p>
+          <div class="qr-metrics" id="qr-metrics"></div>
+          <div class="qr-classes" id="qr-classes"></div>
+
+          <p class="qr-foot">
+            En control de calidad la cifra que decide no es la precisión media, sino el
+            <strong>recall sobre palets dañados</strong>: qué proporción de defectos se detecta.
+            Dentro del dominio de diseño es de 0.901.
+          </p>
+        </article>
+
+      </div>
+    </section>
 
     <section class="section">
       <div class="section-card reveal">
@@ -1491,7 +1729,7 @@
   </main>
 
   <footer class="site-footer">
-    &copy; 2025 Marc Rubí · AURION
+    &copy; 2026 Marc Rubí · AURION
   </footer>
 
   <div id="imageModal" class="modal" onclick="closeModal(event)" aria-hidden="true">
@@ -1572,5 +1810,193 @@
 
     elements.forEach(el => observer.observe(el));
   </script>
+
+  <script>
+  (function () {
+    "use strict";
+    var root = document.getElementById("metricas");
+    if (!root) return;
+
+    var BASE = 0.8597;
+    var CURVES = [
+      { id:"movimiento", label:"Movimiento", unit:"kernel px", alert:true,
+        pts:[[1,0.8597],[5,0.8111],[11,0.5957],[21,0.2174],[31,0.0651]] },
+      { id:"ruido", label:"Ruido", unit:"sigma",
+        pts:[[0,0.8597],[5,0.8575],[10,0.8387],[20,0.7950],[35,0.6671]] },
+      { id:"desenfoque", label:"Desenfoque", unit:"kernel",
+        pts:[[1,0.8597],[3,0.8525],[5,0.8441],[9,0.8306],[15,0.8106]] },
+      { id:"compresion", label:"Compresión", unit:"calidad JPEG",
+        pts:[[100,0.8595],[70,0.8560],[50,0.8512],[30,0.8535],[15,0.8485]] },
+      { id:"contraste", label:"Contraste", unit:"factor",
+        pts:[[1.0,0.8597],[0.8,0.8578],[0.6,0.8574],[0.4,0.8515]] },
+      { id:"brillo", label:"Brillo", unit:"factor",
+        pts:[[1.0,0.8597],[1.2,0.8627],[0.8,0.8566],[1.5,0.8543],[0.6,0.8567],[0.4,0.8534]] }
+    ];
+    var COLORS = ["#c2364b", "#004b8d", "#19a7ce", "#5f8fbf", "#7fa6c4", "#9db6cc"];
+
+    var SCEN = {
+      control: { name:"Puesto de control",
+        scope:"Dominio de diseño · 61 imágenes · uno a seis objetos por escena",
+        map50:"0.881", map:"0.738", rec:"0.874", roto:"0.901",
+        cls:[0.693,0.765,0.801,0.693,0.790,0.687] },
+      almacen: { name:"Almacén general",
+        scope:"Fuera de especificación · 66 imágenes · hasta 72 objetos por escena",
+        map50:"0.858", map:"0.672", rec:"0.815", roto:"0.756",
+        cls:[0.639,0.561,0.659,0.808,0.558,0.805] },
+      global: { name:"Conjunto completo",
+        scope:"127 imágenes · 1.379 instancias anotadas",
+        map50:"0.860", map:"0.681", rec:"0.823", roto:"0.790",
+        cls:[0.643,0.613,0.671,0.768,0.616,0.777] }
+    };
+    var CLASSES = ["Palet en buen estado","Palet dañado","Embalaje y dimensiones correctos",
+                   "Embalaje correcto, dimensiones incorrectas",
+                   "Embalaje incorrecto, dimensiones correctas","Ambos incorrectos"];
+
+    var NS = "http://www.w3.org/2000/svg";
+    function mk(t, a) { var e = document.createElementNS(NS, t); for (var k in a) e.setAttribute(k, a[k]); return e; }
+
+    var W = 720, H = 330, M = { t: 18, r: 18, b: 44, l: 50 };
+    var PW = W - M.l - M.r, PH = H - M.t - M.b;
+    var steps = 0;
+    CURVES.forEach(function (c) { if (c.pts.length - 1 > steps) steps = c.pts.length - 1; });
+    function X(i) { return M.l + (i / steps) * PW; }
+    function Y(v) { return M.t + (1 - v) * PH; }
+
+    var gGrid = document.getElementById("qr-grid"),
+        gBand = document.getElementById("qr-band"),
+        gCurv = document.getElementById("qr-curves"),
+        gHov  = document.getElementById("qr-hover"),
+        out   = document.getElementById("qr-readout");
+
+    var LINE = "#dce7f3", MUTED = "#5f6f89", ACC = "#19a7ce";
+
+    for (var v = 0; v <= 1.0001; v += 0.25) {
+      gGrid.appendChild(mk("line", { x1:M.l, y1:Y(v), x2:M.l+PW, y2:Y(v), stroke:LINE, "stroke-width":1 }));
+      var ty = mk("text", { x:M.l-10, y:Y(v)+4, "text-anchor":"end", fill:MUTED, "font-size":11, "font-weight":700 });
+      ty.textContent = v.toFixed(2); gGrid.appendChild(ty);
+    }
+    for (var i = 0; i <= steps; i++) {
+      var tx = mk("text", { x:X(i), y:H-M.b+24, "text-anchor":"middle", fill:MUTED, "font-size":11, "font-weight":700 });
+      tx.textContent = i === 0 ? "sin degradar" : "nivel " + i; gGrid.appendChild(tx);
+    }
+
+    var lim = BASE * 0.9;
+    gBand.appendChild(mk("rect", { x:M.l, y:Y(BASE), width:PW, height:Y(lim)-Y(BASE), fill:ACC, opacity:0.10 }));
+    gBand.appendChild(mk("line", { x1:M.l, y1:Y(lim), x2:M.l+PW, y2:Y(lim), stroke:ACC, "stroke-width":1, "stroke-dasharray":"4 4" }));
+    var bl = mk("text", { x:M.l+PW, y:Y(lim)-8, "text-anchor":"end", fill:ACC, "font-size":10.5, "font-weight":800 });
+    bl.textContent = "límite de tolerancia · −10 %"; gBand.appendChild(bl);
+
+    var on = {};
+    CURVES.forEach(function (c, ci) {
+      on[c.id] = true;
+      c.color = COLORS[ci];
+      var d = c.pts.map(function (p, i) { return (i ? "L" : "M") + X(i).toFixed(1) + "," + Y(p[1]).toFixed(1); }).join(" ");
+      c.el = mk("path", { d:d, "class":"qr-curve", stroke:c.color, "stroke-width": c.alert ? 2.8 : 1.9 });
+      gCurv.appendChild(c.el);
+      try {
+        var L = c.el.getTotalLength();
+        if (L && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          c.el.style.strokeDasharray = L; c.el.style.strokeDashoffset = L; c.len = L;
+        }
+      } catch (e) {}
+      c.dots = c.pts.map(function (p, i) {
+        var o = mk("circle", { cx:X(i), cy:Y(p[1]), r: c.alert ? 3.6 : 2.8, fill:c.color, "class":"qr-dot" });
+        gCurv.appendChild(o); return o;
+      });
+    });
+
+    var vline = mk("line", { y1:M.t, y2:M.t+PH, stroke:MUTED, "stroke-width":1, opacity:0, "stroke-dasharray":"2 3" });
+    gHov.appendChild(vline);
+
+    var DEF = "Pasa el cursor sobre el gráfico para leer los valores. Pulsa una etiqueta para aislar su curva.";
+    var svg = root.querySelector(".qr-chart__svg");
+
+    svg.addEventListener("pointermove", function (e) {
+      var r = svg.getBoundingClientRect();
+      var px = (e.clientX - r.left) / r.width * W;
+      if (px < M.l || px > M.l + PW) return;
+      var s = Math.round((px - M.l) / PW * steps);
+      vline.setAttribute("x1", X(s)); vline.setAttribute("x2", X(s)); vline.setAttribute("opacity", 0.45);
+      var rows = [];
+      CURVES.forEach(function (c) {
+        if (!on[c.id] || !c.pts[s]) return;
+        var pc = (c.pts[s][1] - BASE) / BASE * 100;
+        rows.push(c.label + " (" + c.unit + " " + c.pts[s][0] + ") <b>" + c.pts[s][1].toFixed(3) + "</b>"
+                  + (pc < -0.05 ? " " + pc.toFixed(1) + "\u2009%" : ""));
+      });
+      out.innerHTML = rows.length ? rows.join(" &nbsp;·&nbsp; ") : DEF;
+    });
+    svg.addEventListener("pointerleave", function () { vline.setAttribute("opacity", 0); out.innerHTML = DEF; });
+
+    var keys = document.getElementById("qr-keys");
+    CURVES.forEach(function (c) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "qr-key"; b.setAttribute("aria-pressed", "true");
+      b.style.color = c.color;
+      b.innerHTML = '<i class="qr-key__dot"></i>' + c.label;
+      b.addEventListener("click", function () {
+        on[c.id] = !on[c.id];
+        b.setAttribute("aria-pressed", String(on[c.id]));
+        c.el.classList.toggle("is-off", !on[c.id]);
+        c.dots.forEach(function (d) { d.classList.toggle("is-off", !on[c.id]); });
+      });
+      keys.appendChild(b);
+    });
+
+    var tabs = document.getElementById("qr-tabs"),
+        mets = document.getElementById("qr-metrics"),
+        cls  = document.getElementById("qr-classes"),
+        scope = document.getElementById("qr-scope");
+
+    function paint(k) {
+      var s = SCEN[k];
+      scope.textContent = s.scope;
+      mets.innerHTML =
+        '<div class="qr-metric"><small>Precisión mAP50</small><strong>' + s.map50 + '</strong></div>' +
+        '<div class="qr-metric"><small>Precisión mAP50-95</small><strong>' + s.map + '</strong></div>' +
+        '<div class="qr-metric"><small>Recall global</small><strong>' + s.rec + '</strong></div>' +
+        '<div class="qr-metric is-key"><small>Recall · palet dañado</small><strong>' + s.roto + '</strong></div>';
+      cls.innerHTML = CLASSES.map(function (n, i) {
+        return '<div class="qr-class"><div><div class="qr-class__n">' + n + '</div>' +
+               '<div class="qr-class__track"><i class="qr-class__fill" style="width:' + (s.cls[i] * 100).toFixed(1) + '%"></i></div></div>' +
+               '<div class="qr-class__v">' + s.cls[i].toFixed(3) + '</div></div>';
+      }).join("");
+    }
+
+    Object.keys(SCEN).forEach(function (k, i) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "qr-tab"; b.setAttribute("role", "tab");
+      b.setAttribute("aria-selected", String(i === 0));
+      b.textContent = SCEN[k].name;
+      b.addEventListener("click", function () {
+        Array.prototype.forEach.call(tabs.children, function (x) { x.setAttribute("aria-selected", "false"); });
+        b.setAttribute("aria-selected", "true"); paint(k);
+      });
+      tabs.appendChild(b);
+    });
+    paint("control");
+
+    if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          e.target.classList.add("qr-seen");
+          if (e.target.querySelector(".qr-chart")) {
+            CURVES.forEach(function (c, i) {
+              if (!c.len) return;
+              c.el.style.transition = "stroke-dashoffset 1s ease " + (i * 0.09) + "s";
+              c.el.style.strokeDashoffset = 0;
+            });
+          }
+          io.unobserve(e.target);
+        });
+      }, { threshold: 0.2 });
+      Array.prototype.forEach.call(root.querySelectorAll(".section-card"), function (el) { io.observe(el); });
+    } else {
+      root.classList.add("qr-seen");
+    }
+  })();
+  </script>
+
 </body>
 </html>
