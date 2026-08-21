@@ -2,6 +2,29 @@
 (function () {
   const STORAGE_KEY = "aurion-language";
   const exactTranslations = {
+    "El modelo analiza cada imagen capturada, localiza elementos relevantes y clasifica el estado del palet, la carga y el embalaje en 6,9 milisegundos, para apoyar una decisión objetiva sin frenar el ritmo de la recepción.":
+      "The model analyses each captured image, locates the relevant elements and classifies the condition of the pallet, load and packaging in 6.9 milliseconds, supporting an objective decision without slowing down receiving.",
+    "La arquitectura permite realizar detección multicategoría en una sola pasada, lo que permite evaluar en un mismo paso el estado del palet, la calidad del embalaje y si las dimensiones de la carga son las esperadas.":
+      "The architecture performs multi-class detection in a single pass, so pallet condition, packaging quality and whether the load dimensions match expectations are all assessed in one step.",
+    "la primera versión de este modelo reportaba un 99&nbsp;% de precisión. El resultado era demasiado bueno para ser cierto, y al investigarlo resultó estar mal medido: el sistema se evaluaba con imágenes que ya había visto durante el entrenamiento. Corregida la metodología, las cifras publicadas son las reales.":
+      "the first version of this model reported 99&nbsp;% accuracy. The result was too good to be true, and on investigation it turned out to be badly measured: the system was being evaluated on images it had already seen during training. With the methodology corrected, the published figures are the real ones.",
+    /* ---------- index.html · premio, evaluación e impacto ---------- */
+    "Premio EETAC al mejor proyecto individual · Mecalux AI Challenge, UPC":
+      "EETAC Best Individual Project Award · Mecalux AI Challenge, UPC",
+
+    "Sobre la evaluación:": "About the evaluation:",
+    "Ver el análisis completo": "See the full analysis",
+
+    "6,9 ms por imagen.": "6.9 ms per image.",
+    "Unas 145 imágenes por segundo, suficiente para analizar cada palet sin frenar la recepción.":
+      "Around 145 images per second — enough to analyse every pallet without slowing down receiving.",
+    "El mismo criterio a las 3 de la tarde que a las 3 de la mañana.":
+      "The same criterion at 3 in the afternoon as at 3 in the morning.",
+    "Sin fatiga, sin turnos y sin diferencias entre operarios.":
+      "No fatigue, no shift effects, no variation between operators.",
+    "9 de cada 10 palets dañados detectados": "9 out of 10 damaged pallets caught",
+    "en el escenario de puesto de control, antes de que el defecto avance por la cadena.":
+      "in the control-station scenario, before the defect moves further down the chain.",
     "&copy; 2026 Marc Rubí · AURION · Sistema de visión por computador para inspección logística":
       "&copy; 2026 Marc Rubí · AURION · Computer vision system for logistics inspection",
     "© 2026 Marc Rubí · AURION · Sistema de visión por computador para inspección logística":
